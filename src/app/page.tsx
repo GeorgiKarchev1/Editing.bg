@@ -664,13 +664,13 @@ function AboutSection() {
               />
             </div>
             {/* Decorative Icon */}
-            <motion.div 
+              <motion.div
               animate={{ rotate: -360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="absolute -top-3 -right-3 w-16 h-16 bg-primary-yellow rounded-full flex items-center justify-center"
             >
               <Video className="w-8 h-8 text-black" />
-            </motion.div>
+              </motion.div>
           </div>
           
           {/* Team Member 2 Info */}
@@ -735,7 +735,7 @@ function ContactSection() {
       [e.target.name]: e.target.value
     }))
   }
-
+  
   return (
     <section id="contact" ref={ref} className="py-20 px-4 sm:px-6 lg:px-8 bg-dark-card/30">
       <div className="max-w-4xl mx-auto">
@@ -752,11 +752,11 @@ function ContactSection() {
             Готови сте да трансформирате съдържанието си? Да обсъдим проекта ви и да въплътим визията ви в живот.
           </p>
         </motion.div>
-
+        
         {/* Contact Form */}
-        <motion.div
+            <motion.div
           initial={{ opacity: 0, y: 50 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="max-w-3xl mx-auto"
         >
@@ -856,13 +856,13 @@ function ContactSection() {
                         Изпрати съобщение
                       </>
                     )}
-                  </motion.button>
+              </motion.button>
                 </form>
               )}
             </div>
-            
+              
             {/* Direct Contact Info */}
-            <motion.div 
+              <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.6 }}
