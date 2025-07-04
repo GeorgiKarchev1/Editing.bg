@@ -3,9 +3,13 @@ actions:
     command: npm install --production
   - name: Build the application
     command: npm run build
+  - name: List contents of out directory
+    command: ls -la out/
   - name: Clean destination directory
-    command: rm -rf $DOCUMENT_ROOT/*
-  - name: Copy built files
-    command: cp -r out/* $DOCUMENT_ROOT/
+    command: rm -rf $DOCUMENT_ROOT/.next $DOCUMENT_ROOT/404.html $DOCUMENT_ROOT/index.html $DOCUMENT_ROOT/next.svg $DOCUMENT_ROOT/vercel.svg $DOCUMENT_ROOT/window.svg $DOCUMENT_ROOT/file.svg $DOCUMENT_ROOT/globe.svg $DOCUMENT_ROOT/favicon.ico $DOCUMENT_ROOT/*.jpg $DOCUMENT_ROOT/*.JPG
+  - name: Copy built files with verbose output
+    command: cp -rv out/* $DOCUMENT_ROOT/
+  - name: List contents of document root
+    command: ls -la $DOCUMENT_ROOT/
   - name: Set proper permissions
     command: chmod -R 755 $DOCUMENT_ROOT/ 
