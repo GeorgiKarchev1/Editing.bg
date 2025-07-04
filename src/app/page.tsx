@@ -125,13 +125,11 @@ function HeroSection() {
       <motion.div 
         style={{ y: floatingY1 }}
         animate={{ y: [-20, 20, -20], rotate: [0, 180, 360] }}
-        transition={{ duration: 6, repeat: Infinity }}
         className="absolute top-32 left-10 w-16 h-16 bg-primary-yellow/20 rounded-full blur-sm"
       />
       <motion.div 
         style={{ y: floatingY2 }}
         animate={{ y: [20, -20, 20], rotate: [360, 180, 0] }}
-        transition={{ duration: 8, repeat: Infinity }}
         className="absolute bottom-20 right-10 w-24 h-24 bg-primary-yellow/10 rounded-full blur-md"
       />
       
@@ -139,13 +137,11 @@ function HeroSection() {
       <motion.div 
         style={{ y: floatingY1 }}
         animate={{ x: [-30, 30, -30], rotate: [0, 45, 0] }}
-        transition={{ duration: 10, repeat: Infinity }}
         className="absolute top-1/4 right-1/4 w-12 h-12 border-2 border-primary-yellow/30 rotate-45"
       />
       <motion.div 
         style={{ y: floatingY2 }}
         animate={{ x: [40, -40, 40], scale: [1, 1.2, 1] }}
-        transition={{ duration: 7, repeat: Infinity }}
         className="absolute bottom-1/3 left-1/5 w-8 h-8 bg-primary-yellow/25 transform rotate-12"
       />
       
@@ -156,14 +152,12 @@ function HeroSection() {
         <motion.h1 
           initial={{ opacity: 0, y: 50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
           className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-relaxed tracking-wide"
         >
           Превърни видеата си в{' '}
           <br className="hidden sm:block" />
           <motion.span 
             animate={{ textShadow: ['0 0 20px #FFD700', '0 0 40px #FFD700', '0 0 20px #FFD700'] }}
-            transition={{ duration: 2, repeat: Infinity }}
             className="text-primary-yellow"
           >
             завладяващо
@@ -174,7 +168,6 @@ function HeroSection() {
         <motion.p 
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.2 }}
           className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto"
         >
           Професионално видео монтиране, което прави съдържанието ти да блести. От суров материал до готови за вайръл шедьоври.
@@ -183,7 +176,6 @@ function HeroSection() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <motion.button
@@ -208,7 +200,6 @@ function HeroSection() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 1, delay: 0.6 }}
           className="mt-16 relative max-w-4xl mx-auto"
         >
           <div className="aspect-video bg-dark-card rounded-2xl border-2 border-primary-yellow/30 overflow-hidden relative">
@@ -291,28 +282,25 @@ function PortfolioSection() {
       id: 7,
       title: 'Работа Преди и След Трансформацията',
       category: 'Shorts',
-      videoSrc: '/Work before after v4.mp4',
-      thumbnail: '/beforeAfter.png',
-      type: 'local',
-      duration: '0:45'
+      link: "https://youtube.com/shorts/KtpY-yzXTCk?feature=share",
+      thumbnail: "https://img.youtube.com/vi/KtpY-yzXTCk/maxresdefault.jpg",
+      type: "video",
     },
     {
       id: 8,
       title: 'Mr. Airpod Компилация V2',
       category: 'Shorts',
-      videoSrc: '/V2 Mr.airpod Compilation 1.mp4',
-      thumbnail: '/za tqh.png',
-      type: 'local',
-      duration: '1:20'
+      link: "https://youtube.com/shorts/cs9b2SemtA0?feature=share",
+      thumbnail: "https://img.youtube.com/vi/cs9b2SemtA0/maxresdefault.jpg",
+      type: "video",
     },
     {
       id: 9,
       title: 'Vonster Кратки Акценти',
       category: 'Shorts',
-      videoSrc: '/Vonster short.mp4',
-      thumbnail: '/mr airpod kurva.png',
-      type: 'local',
-      duration: '2:15'
+      link: "https://youtube.com/shorts/I6njVaxRkf8?feature=share",
+      thumbnail: "https://img.youtube.com/vi/I6njVaxRkf8/maxresdefault.jpg",
+      type: "video",
     },
   ]
   
@@ -321,7 +309,6 @@ function PortfolioSection() {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8 }}
         className="text-center mb-16"
       >
         <h2 className="font-display text-4xl md:text-6xl font-bold mb-6">
@@ -352,42 +339,12 @@ function PortfolioSection() {
             <div 
               className="aspect-video bg-gradient-to-br from-primary-yellow/20 to-dark-bg relative overflow-hidden cursor-pointer"
               onClick={() => {
-                if (item.type === 'local' && item.videoSrc) {
-                  // For local videos, we'll create a modal or direct playback
-                  const video = document.createElement('video');
-                  video.src = item.videoSrc;
-                  video.controls = true;
-                  video.autoplay = true;
-                  video.style.position = 'fixed';
-                  video.style.top = '50%';
-                  video.style.left = '50%';
-                  video.style.transform = 'translate(-50%, -50%)';
-                  video.style.zIndex = '9999';
-                  video.style.maxWidth = '90vw';
-                  video.style.maxHeight = '90vh';
-                  video.style.backgroundColor = 'black';
-                  
-                  const overlay = document.createElement('div');
-                  overlay.style.position = 'fixed';
-                  overlay.style.top = '0';
-                  overlay.style.left = '0';
-                  overlay.style.width = '100%';
-                  overlay.style.height = '100%';
-                  overlay.style.backgroundColor = 'rgba(0,0,0,0.8)';
-                  overlay.style.zIndex = '9998';
-                  overlay.onclick = () => {
-                    document.body.removeChild(overlay);
-                    document.body.removeChild(video);
-                  };
-                  
-                  document.body.appendChild(overlay);
-                  document.body.appendChild(video);
-                } else if (item.link) {
+                if (item.link) {
                   window.open(item.link, '_blank');
                 }
               }}
             >
-                            {item.type === 'local' ? (
+                            {false ? (
                 /* Local Video Thumbnail */
                 <img 
                   src={item.thumbnail} 
@@ -435,11 +392,11 @@ function PortfolioSection() {
               
               {/* Video Type Badge */}
               <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 ${
-                item.type === 'local' 
+                false 
                   ? 'bg-purple-600 text-white' 
                   : 'bg-red-600 text-white'
               }`}>
-                {item.type === 'local' ? (
+                {false ? (
                   <>
                     <Video className="w-4 h-4" />
                     Short
@@ -461,7 +418,7 @@ function PortfolioSection() {
               <p className="text-gray-400 text-sm mb-4">
                 Професионален видео монтаж • Цветна корекция • Анимации
               </p>
-              {item.type === 'local' ? (
+              {false ? (
                                   <div className="inline-flex items-center gap-2 text-primary-yellow text-sm font-medium">
                     <Video className="w-4 h-4" />
                     Кликни за да изгледаш шорта
@@ -524,7 +481,6 @@ function TestimonialsSection() {
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
           <h2 className="font-display text-4xl md:text-6xl font-bold mb-6">
@@ -576,7 +532,6 @@ function AboutSection() {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8 }}
         className="text-center mb-24"
       >
         <h2 className="font-display text-5xl md:text-7xl font-bold mb-8">
@@ -593,7 +548,6 @@ function AboutSection() {
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.2 }}
           className="text-center"
         >
           {/* Tsvetan Georgiev Photo */}
@@ -612,7 +566,6 @@ function AboutSection() {
             {/* Decorative Icon */}
             <motion.div 
               animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="absolute -top-3 -right-3 w-16 h-16 bg-primary-yellow rounded-full flex items-center justify-center"
             >
               <Video className="w-8 h-8 text-black" />
@@ -647,7 +600,6 @@ function AboutSection() {
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.4 }}
           className="text-center"
         >
           {/* Team Member 2 Photo */}
@@ -666,7 +618,6 @@ function AboutSection() {
             {/* Decorative Icon */}
               <motion.div
               animate={{ rotate: -360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="absolute -top-3 -right-3 w-16 h-16 bg-primary-yellow rounded-full flex items-center justify-center"
             >
               <Video className="w-8 h-8 text-black" />
@@ -742,7 +693,6 @@ function ContactSection() {
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
           <h2 className="font-display text-4xl md:text-6xl font-bold mb-6">
@@ -757,7 +707,6 @@ function ContactSection() {
             <motion.div
           initial={{ opacity: 0, y: 50 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.2 }}
           className="max-w-3xl mx-auto"
         >
           <div className="bg-dark-card p-12 rounded-2xl border border-dark-border">
@@ -865,7 +814,6 @@ function ContactSection() {
               <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.6 }}
               className="mt-8 text-center"
             >
               <p className="text-gray-400 mb-4">Или се свържете директно:</p>
@@ -962,14 +910,12 @@ function FloatingCTA() {
     <motion.div
       initial={{ opacity: 0, y: 100 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 2 }}
       className="fixed bottom-8 right-8 z-40"
     >
       <motion.button
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
         animate={{ y: [0, -10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
         className="bg-primary-yellow text-black p-4 rounded-full shadow-lg cursor-glow animate-glow"
       >
         <Mail className="w-6 h-6" />
