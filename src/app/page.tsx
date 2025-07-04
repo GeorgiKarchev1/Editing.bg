@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { PlayCircle, Star, Clock, Video, Zap, CheckCircle, ChevronDown, Mail, Github, Youtube, Instagram, MessageCircle, Check, Send } from 'lucide-react'
+import { PlayCircle, Star, Video, Mail, Youtube, Instagram, MessageCircle, Check, Send } from 'lucide-react'
 import { useState } from 'react'
 
 function ParallaxBackground() {
@@ -227,7 +227,6 @@ function PortfolioSection() {
   const { scrollYProgress } = useScroll()
   
   const portfolioY = useTransform(scrollYProgress, [0.2, 0.8], [50, -50])
-  const portfolioOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.7, 0.9], [0, 1, 1, 0])
   
   const portfolioItems = [
     { 
@@ -327,7 +326,7 @@ function PortfolioSection() {
         layout
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
       >
-        {portfolioItems.map((item, index) => (
+        {portfolioItems.map((item) => (
           <motion.div
             key={item.id}
             layout
@@ -492,7 +491,7 @@ function TestimonialsSection() {
         </motion.div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
+          {testimonials.map((testimonial) => (
             <div key={testimonial.id} className="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-primary-yellow/50 transition-all">
               {/* Stars */}
               <div className="flex gap-1 mb-4">
@@ -503,7 +502,7 @@ function TestimonialsSection() {
               
               {/* Content */}
               <p className="text-gray-300 mb-6 italic">
-                "{testimonial.content}"
+{testimonial.content}
               </p>
               
               {/* Author */}
