@@ -1,7 +1,11 @@
 actions:
   - name: Install dependencies
-    command: npm install
+    command: npm install --production
   - name: Build the application
     command: npm run build
+  - name: Clean destination directory
+    command: rm -rf $DOCUMENT_ROOT/*
   - name: Copy built files
-    command: cp -r out/* $DOCUMENT_ROOT/ 
+    command: cp -r out/* $DOCUMENT_ROOT/
+  - name: Set proper permissions
+    command: chmod -R 755 $DOCUMENT_ROOT/ 

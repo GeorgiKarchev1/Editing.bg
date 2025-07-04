@@ -605,7 +605,7 @@ function AboutSection() {
           <div className="relative mb-10">
             <div className="w-80 h-80 mx-auto bg-gradient-to-br from-primary-yellow/20 to-dark-card rounded-3xl border-4 border-primary-yellow/30 overflow-hidden">
               <img 
-                src="/azusmihnat.JPG" 
+                src="/azusmihnat.jpg" 
                 alt="Team Member 2"
                 className="w-full h-full object-cover"
                 onError={(e) => {
