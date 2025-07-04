@@ -1,0 +1,7 @@
+actions:
+  - name: Install dependencies
+    command: npm install
+  - name: Build the application
+    command: npm run build
+  - name: Copy built files
+    command: cp -r out/* $DOCUMENT_ROOT/ 
