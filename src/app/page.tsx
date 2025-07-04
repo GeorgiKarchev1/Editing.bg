@@ -1,3 +1,4 @@
+// Test webhook deployment - 2025-07-05 00:58
 'use client'
 
 import { motion, useScroll, useTransform } from 'framer-motion'
@@ -580,7 +581,7 @@ function AboutSection() {
               CEO
             </p>
             <p className="text-gray-300 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
-              Основател и CEO на Editing.bg, водещ креативната визия и бизнес стратегията. 
+              Основател и CEO на Editing.bg, водещ креативната визия и бизнес стратегия. 
               Експерт във видео монтиране с години опит в трансформирането на съдържание за създатели по целия свят.
             </p>
             
