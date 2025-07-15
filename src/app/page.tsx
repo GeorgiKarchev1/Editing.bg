@@ -20,33 +20,33 @@ function ParallaxBackground() {
       {/* Floating circles with parallax */}
       <motion.div 
         style={{ y: y1, rotate: rotate1 }}
-        className="absolute top-20 left-10 w-32 h-32 bg-primary-yellow/5 rounded-full blur-xl"
+        className="absolute top-20 left-10 w-32 h-32 bg-primary-blue/5 rounded-full blur-xl"
       />
       <motion.div 
         style={{ y: y2, rotate: rotate2 }}
-        className="absolute top-40 right-20 w-24 h-24 bg-primary-yellow/10 rounded-full blur-lg"
+        className="absolute top-40 right-20 w-24 h-24 bg-primary-purple/10 rounded-full blur-lg"
       />
       <motion.div 
         style={{ y: y3 }}
-        className="absolute bottom-40 left-1/4 w-40 h-40 bg-primary-yellow/3 rounded-full blur-2xl"
+        className="absolute bottom-40 left-1/4 w-40 h-40 bg-primary-teal/3 rounded-full blur-2xl"
       />
       <motion.div 
         style={{ y: y1, rotate: rotate1 }}
-        className="absolute bottom-20 right-10 w-20 h-20 bg-primary-yellow/8 rounded-full blur-md"
+        className="absolute bottom-20 right-10 w-20 h-20 bg-primary-blue/8 rounded-full blur-md"
       />
       <motion.div 
         style={{ y: y2 }}
-        className="absolute top-1/2 left-1/2 w-16 h-16 bg-primary-yellow/6 rounded-full blur-sm"
+        className="absolute top-1/2 left-1/2 w-16 h-16 bg-primary-purple/6 rounded-full blur-sm"
       />
       
       {/* Geometric shapes */}
       <motion.div 
         style={{ y: y2, rotate: rotate1 }}
-        className="absolute top-60 right-1/4 w-12 h-12 border border-primary-yellow/20 rotate-45"
+        className="absolute top-60 right-1/4 w-12 h-12 border border-primary-teal/20 rotate-45"
       />
       <motion.div 
         style={{ y: y3, rotate: rotate2 }}
-        className="absolute bottom-60 left-1/3 w-8 h-8 bg-primary-yellow/15 transform rotate-12"
+        className="absolute bottom-60 left-1/3 w-8 h-8 bg-primary-blue/15 transform rotate-12"
       />
     </div>
   )
@@ -80,7 +80,7 @@ function NavigationBar() {
           <motion.a
             href="#hero"
             whileHover={{ scale: 1.05 }}
-            className="font-display font-bold text-xl text-primary-yellow cursor-pointer"
+            className="font-display font-bold text-xl gradient-text cursor-pointer"
           >
             Editing.bg
           </motion.a>
@@ -95,8 +95,8 @@ function NavigationBar() {
               <motion.a
                 key={item.name}
                 href={`#${item.href}`}
-                whileHover={{ scale: 1.1, color: '#FFD700' }}
-                className="text-gray-300 hover:text-primary-yellow transition-colors cursor-glow"
+                whileHover={{ scale: 1.1, color: '#4F46E5' }}
+                className="text-gray-300 hover:text-primary-blue transition-colors cursor-glow"
               >
                 {item.name}
               </motion.a>
@@ -126,24 +126,24 @@ function HeroSection() {
       <motion.div 
         style={{ y: floatingY1 }}
         animate={{ y: [-20, 20, -20], rotate: [0, 180, 360] }}
-        className="absolute top-32 left-10 w-16 h-16 bg-primary-yellow/20 rounded-full blur-sm"
+        className="absolute top-32 left-10 w-16 h-16 bg-primary-blue/20 rounded-full blur-sm"
       />
       <motion.div 
         style={{ y: floatingY2 }}
         animate={{ y: [20, -20, 20], rotate: [360, 180, 0] }}
-        className="absolute bottom-20 right-10 w-24 h-24 bg-primary-yellow/10 rounded-full blur-md"
+        className="absolute bottom-20 right-10 w-24 h-24 bg-primary-purple/10 rounded-full blur-md"
       />
       
       {/* Additional parallax elements */}
       <motion.div 
         style={{ y: floatingY1 }}
         animate={{ x: [-30, 30, -30], rotate: [0, 45, 0] }}
-        className="absolute top-1/4 right-1/4 w-12 h-12 border-2 border-primary-yellow/30 rotate-45"
+        className="absolute top-1/4 right-1/4 w-12 h-12 border-2 border-primary-teal/30 rotate-45"
       />
       <motion.div 
         style={{ y: floatingY2 }}
         animate={{ x: [40, -40, 40], scale: [1, 1.2, 1] }}
-        className="absolute bottom-1/3 left-1/5 w-8 h-8 bg-primary-yellow/25 transform rotate-12"
+        className="absolute bottom-1/3 left-1/5 w-8 h-8 bg-primary-blue/25 transform rotate-12"
       />
       
       <motion.div 
@@ -158,8 +158,8 @@ function HeroSection() {
           Превърни видеата си в{' '}
           <br className="hidden sm:block" />
           <motion.span 
-            animate={{ textShadow: ['0 0 20px #FFD700', '0 0 40px #FFD700', '0 0 20px #FFD700'] }}
-            className="text-primary-yellow"
+            animate={{ textShadow: ['0 0 20px #4F46E5', '0 0 40px #7C3AED', '0 0 20px #4F46E5'] }}
+            className="gradient-text"
           >
             завладяващо
           </motion.span>{' '}
@@ -180,9 +180,9 @@ function HeroSection() {
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 0 30px #FFD700' }}
+            whileHover={{ scale: 1.05, boxShadow: '0 0 30px #4F46E5' }}
             whileTap={{ scale: 0.95 }}
-            className="bg-primary-yellow text-black px-8 py-4 rounded-full font-semibold text-lg flex items-center gap-2 cursor-glow animate-glow"
+            className="bg-gradient-primary text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center gap-2 cursor-glow animate-glow"
           >
             <PlayCircle className="w-6 h-6" />
             Виж работата ни
@@ -191,7 +191,7 @@ function HeroSection() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="border-2 border-primary-yellow text-primary-yellow px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-yellow hover:text-black transition-all cursor-glow"
+            className="border-2 border-primary-blue text-primary-blue px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-blue hover:text-white transition-all cursor-glow"
           >
             Да работим заедно
           </motion.button>
@@ -203,14 +203,14 @@ function HeroSection() {
           animate={inView ? { opacity: 1, scale: 1 } : {}}
           className="mt-16 relative max-w-4xl mx-auto"
         >
-          <div className="aspect-video bg-dark-card rounded-2xl border-2 border-primary-yellow/30 overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-yellow/20 to-transparent"></div>
+          <div className="aspect-video bg-dark-card rounded-2xl glow-border overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-blue/20 via-primary-purple/20 to-primary-teal/20"></div>
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div 
                 whileHover={{ scale: 1.1 }}
-                className="w-20 h-20 bg-primary-yellow rounded-full flex items-center justify-center cursor-pointer"
+                className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center cursor-pointer"
               >
-                <PlayCircle className="w-10 h-10 text-black" />
+                <PlayCircle className="w-10 h-10 text-white" />
               </motion.div>
             </div>
             <div className="absolute bottom-4 left-4 text-sm text-gray-400">
@@ -312,7 +312,7 @@ function PortfolioSection() {
         className="text-center mb-16"
       >
         <h2 className="font-display text-4xl md:text-6xl font-bold mb-6">
-           <span className="text-primary-yellow">Портфолио</span>
+           <span className="gradient-text">Портфолио</span>
         </h2>
         <p className="text-xl text-gray-300 max-w-2xl mx-auto">
           Виж някои от последните ни работи, които генерират гледания и ангажираност
@@ -333,11 +333,11 @@ function PortfolioSection() {
             layout
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            className="group relative bg-dark-card rounded-2xl overflow-hidden border border-dark-border hover:border-primary-yellow hover:shadow-lg hover:shadow-primary-yellow/20 transition-all duration-300 ease-out"
+            className="group relative bg-dark-card rounded-2xl overflow-hidden border border-dark-border hover:border-primary-blue hover:shadow-lg hover:shadow-primary-blue/20 transition-all duration-300 ease-out"
           >
             {/* Thumbnail */}
             <div 
-              className="aspect-video bg-gradient-to-br from-primary-yellow/20 to-dark-bg relative overflow-hidden cursor-pointer"
+              className="aspect-video bg-gradient-to-br from-primary-blue/20 via-primary-purple/20 to-primary-teal/20 relative overflow-hidden cursor-pointer"
               onClick={() => {
                 if (item.link) {
                   window.open(item.link, '_blank');
@@ -382,9 +382,9 @@ function PortfolioSection() {
                 <motion.div 
                   whileHover={{ scale: 1.15, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-16 h-16 bg-primary-yellow/90 group-hover:bg-primary-yellow rounded-full flex items-center justify-center backdrop-blur-sm transition-colors duration-300"
+                  className="w-16 h-16 bg-primary-blue/90 group-hover:bg-gradient-primary rounded-full flex items-center justify-center backdrop-blur-sm transition-colors duration-300"
                 >
-                  <PlayCircle className="w-8 h-8 text-black" />
+                  <PlayCircle className="w-8 h-8 text-white" />
                 </motion.div>
               </div>
               
@@ -412,14 +412,14 @@ function PortfolioSection() {
             
             {/* Content */}
             <div className="p-6">
-              <h3 className="font-display text-lg font-semibold mb-3 group-hover:text-primary-yellow transition-colors leading-tight line-clamp-2 min-h-[3.5rem]">
+              <h3 className="font-display text-lg font-semibold mb-3 group-hover:text-primary-blue transition-colors leading-tight line-clamp-2 min-h-[3.5rem]">
                 {item.title}
               </h3>
               <p className="text-gray-400 text-sm mb-4">
                 Професионален видео монтаж • Цветна корекция • Анимации
               </p>
               {false ? (
-                                  <div className="inline-flex items-center gap-2 text-primary-yellow text-sm font-medium">
+                                  <div className="inline-flex items-center gap-2 text-primary-blue text-sm font-medium">
                     <Video className="w-4 h-4" />
                     Кликни за да изгледаш шорта
                   </div>
@@ -428,7 +428,7 @@ function PortfolioSection() {
                   href={item.link} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary-yellow hover:text-yellow-300 transition-colors text-sm font-medium"
+                  className="inline-flex items-center gap-2 text-primary-blue hover:text-primary-purple transition-colors text-sm font-medium"
                 >
                   <Youtube className="w-4 h-4" />
                   YouTube
@@ -484,7 +484,7 @@ function TestimonialsSection() {
           className="text-center mb-16"
         >
           <h2 className="font-display text-4xl md:text-6xl font-bold mb-6">
-            Какво Казват <span className="text-primary-yellow">Клиентите</span>
+            Какво Казват <span className="gradient-text">Клиентите</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Не се доверявайте само на думите ни - ето какво казват създателите за работата ни
@@ -493,11 +493,11 @@ function TestimonialsSection() {
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-primary-yellow/50 transition-all">
+            <div key={testimonial.id} className="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-primary-blue/50 transition-all">
               {/* Stars */}
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-primary-yellow text-primary-yellow" />
+                  <Star key={i} className="w-5 h-5 fill-primary-blue text-primary-blue" />
                 ))}
               </div>
               
@@ -508,7 +508,7 @@ function TestimonialsSection() {
               
               {/* Author */}
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary-yellow to-primary-yellow-dark rounded-full flex items-center justify-center text-black font-bold">
+                <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold">
                   {testimonial.name.charAt(0)}
                 </div>
                 <div>
@@ -535,7 +535,7 @@ function AboutSection() {
         className="text-center mb-24"
       >
         <h2 className="font-display text-5xl md:text-7xl font-bold mb-8">
-          За <span className="text-primary-yellow">Екипа</span>
+          За <span className="gradient-text">Екипа</span>
         </h2>
         <p className="text-2xl text-gray-300 max-w-3xl mx-auto">
           Креативните умове зад Editing.bg
@@ -552,23 +552,23 @@ function AboutSection() {
         >
           {/* Tsvetan Georgiev Photo */}
           <div className="relative mb-10">
-            <div className="w-80 h-80 mx-auto bg-gradient-to-br from-primary-yellow/20 to-dark-card rounded-3xl border-4 border-primary-yellow/30 overflow-hidden">
+            <div className="w-80 h-80 mx-auto bg-gradient-to-br from-primary-blue/20 via-primary-purple/20 to-primary-teal/20 rounded-3xl glow-border overflow-hidden">
               <img 
                 src="/Editing.bg photo.jpg" 
                 alt="Tsvetan Georgiev"
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgdmlld0JveD0iMCAwIDMyMCAzMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMzIwIiBmaWxsPSIjMUYyOTM3Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEzMCIgcj0iNDAiIGZpbGw9IiNGRkQ3MDAiLz4KPHBhdGggZD0iTTk1IDI0MEMxNzUgMTAwIDI0NSAxMTAgMzA1IDI0MEg5NVoiIGZpbGw9IiNGRkQ3MDAiLz4KPHRleHQgeD0iMTYwIiB5PSIyODUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iI0ZGRDcwMCI+VHN2ZXRhbiBHZW9yZ2lldmjwvc3ZnPg==';
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgdmlld0JveD0iMCAwIDMyMCAzMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMzIwIiBmaWxsPSIjMUYyOTM3Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEzMCIgcj0iNDAiIGZpbGw9IiM0RjQ2RTUiLz4KPHBhdGggZD0iTTk1IDI0MEMxNzUgMTAwIDI0NSAxMTAgMzA1IDI0MEg5NVoiIGZpbGw9IiM0RjQ2RTUiLz4KPHRleHQgeD0iMTYwIiB5PSIyODUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzRGNDZFNSI+VHN2ZXRhbiBHZW9yZ2lldmjwvc3ZnPg==';
                 }}
               />
             </div>
             {/* Decorative Icon */}
             <motion.div 
               animate={{ rotate: 360 }}
-              className="absolute -top-3 -right-3 w-16 h-16 bg-primary-yellow rounded-full flex items-center justify-center"
+              className="absolute -top-3 -right-3 w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center"
             >
-              <Video className="w-8 h-8 text-black" />
+              <Video className="w-8 h-8 text-white" />
             </motion.div>
           </div>
           
@@ -577,7 +577,7 @@ function AboutSection() {
             <h3 className="font-display text-3xl font-bold mb-4 text-white">
               Tsvetan Georgiev
             </h3>
-            <p className="text-primary-yellow font-semibold mb-6 text-xl">
+            <p className="text-primary-blue font-semibold mb-6 text-xl">
               CEO
             </p>
             <p className="text-gray-300 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
@@ -588,7 +588,7 @@ function AboutSection() {
             {/* Skills/Specialties */}
             <div className="flex flex-wrap gap-3 justify-center">
               {['Лидерство', 'Креативна визия', 'Бизнес стратегия'].map((skill) => (
-                <span key={skill} className="bg-primary-yellow/20 text-primary-yellow px-4 py-2 rounded-full text-sm font-semibold">
+                <span key={skill} className="bg-primary-blue/20 text-primary-blue px-4 py-2 rounded-full text-sm font-semibold">
                   {skill}
                 </span>
               ))}
@@ -604,23 +604,23 @@ function AboutSection() {
         >
           {/* Team Member 2 Photo */}
           <div className="relative mb-10">
-            <div className="w-80 h-80 mx-auto bg-gradient-to-br from-primary-yellow/20 to-dark-card rounded-3xl border-4 border-primary-yellow/30 overflow-hidden">
+            <div className="w-80 h-80 mx-auto bg-gradient-to-br from-primary-purple/20 via-primary-teal/20 to-primary-blue/20 rounded-3xl glow-border overflow-hidden">
               <img 
                 src="/azusmihnat.jpg" 
                 alt="Team Member 2"
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgdmlld0JveD0iMCAwIDMyMCAzMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMzIwIiBmaWxsPSIjMUYyOTM3Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEzMCIgcj0iNDAiIGZpbGw9IiNGRkQ3MDAiLz4KPHBhdGggZD0iTTk1IDI0MEMxNzUgMTAwIDI0NSAxMTAgMzA1IDI0MEg5NVoiIGZpbGw9IiNGRkQ3MDAiLz4KPHRleHQgeD0iMTYwIiB5PSIyODUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iI0ZGRDcwMCI+VGVhbSBNZW1iZXIgMjwvdGV4dD4KPC9zdmc+';
+                  target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjMyMCIgdmlld0JveD0iMCAwIDMyMCAzMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMzIwIiBmaWxsPSIjMUYyOTM3Ii8+CjxjaXJjbGUgY3g9IjE2MCIgY3k9IjEzMCIgcj0iNDAiIGZpbGw9IiM3QzNBRUQiLz4KPHBhdGggZD0iTTk1IDI0MEMxNzUgMTAwIDI0NSAxMTAgMzA1IDI0MEg5NVoiIGZpbGw9IiM3QzNBRUQiLz4KPHRleHQgeD0iMTYwIiB5PSIyODUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzdDM0FFRCI+VGVhbSBNZW1iZXIgMjwvdGV4dD4KPC9zdmc+';
                 }}
               />
             </div>
             {/* Decorative Icon */}
               <motion.div
               animate={{ rotate: -360 }}
-              className="absolute -top-3 -right-3 w-16 h-16 bg-primary-yellow rounded-full flex items-center justify-center"
+              className="absolute -top-3 -right-3 w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center"
             >
-              <Video className="w-8 h-8 text-black" />
+              <Video className="w-8 h-8 text-white" />
               </motion.div>
           </div>
           
@@ -629,7 +629,7 @@ function AboutSection() {
             <h3 className="font-display text-3xl font-bold mb-4 text-white">
               Georgi Karchev
             </h3>
-            <p className="text-primary-yellow font-semibold mb-6 text-xl">
+            <p className="text-primary-purple font-semibold mb-6 text-xl">
               CTO/COO
             </p>
             <p className="text-gray-300 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
@@ -640,7 +640,7 @@ function AboutSection() {
             {/* Skills/Specialties */}
             <div className="flex flex-wrap gap-3 justify-center">
               {['Технически иновации', 'Операции', 'Осигуряване на качеството'].map((skill) => (
-                <span key={skill} className="bg-primary-yellow/20 text-primary-yellow px-4 py-2 rounded-full text-sm font-semibold">
+                <span key={skill} className="bg-primary-purple/20 text-primary-purple px-4 py-2 rounded-full text-sm font-semibold">
                   {skill}
                 </span>
               ))}
@@ -696,7 +696,7 @@ function ContactSection() {
           className="text-center mb-16"
         >
           <h2 className="font-display text-4xl md:text-6xl font-bold mb-6">
-            Свържете се <span className="text-primary-yellow">с нас</span>
+            Свържете се <span className="gradient-text">с нас</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Готови сте да трансформирате съдържанието си? Да обсъдим проекта ви и да въплътим визията ви в живот.
@@ -734,7 +734,7 @@ function ContactSection() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-yellow focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-blue focus:outline-none transition-colors"
                       placeholder="Въведете вашето име"
                     />
                   </div>
@@ -749,7 +749,7 @@ function ContactSection() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-yellow focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-blue focus:outline-none transition-colors"
                       placeholder="вашия@имейл.com"
                     />
                   </div>
@@ -762,7 +762,7 @@ function ContactSection() {
                       name="projectType"
                       value={formData.projectType}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white focus:border-primary-yellow focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white focus:border-primary-blue focus:outline-none transition-colors"
                     >
                       <option value="YouTube Video">YouTube видео</option>
                       <option value="Short Form Content">Кратко съдържание</option>
@@ -782,7 +782,7 @@ function ContactSection() {
                       onChange={handleChange}
                       required
                       rows={5}
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-yellow focus:outline-none transition-colors resize-none"
+                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-blue focus:outline-none transition-colors resize-none"
                       placeholder="Разкажете ни за вашия проект, график и специфични изисквания..."
                     />
                   </div>
@@ -792,7 +792,7 @@ function ContactSection() {
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full bg-primary-yellow text-black py-4 rounded-xl font-semibold hover:bg-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-primary text-white py-4 rounded-xl font-semibold hover:bg-gradient-to-r hover:from-primary-blue-dark hover:to-primary-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -819,11 +819,11 @@ function ContactSection() {
               <p className="text-gray-400 mb-4">Или се свържете директно:</p>
               <div className="flex justify-center gap-8">
                 <div className="flex items-center gap-2 text-gray-300">
-                  <Mail className="w-5 h-5 text-primary-yellow" />
+                  <Mail className="w-5 h-5 text-primary-blue" />
                   <span>hello@editing.bg</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-300">
-                  <MessageCircle className="w-5 h-5 text-primary-yellow" />
+                  <MessageCircle className="w-5 h-5 text-primary-purple" />
                   <span>Telegram: @editingbg</span>
                 </div>
               </div>
@@ -841,29 +841,29 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
           <div>
-            <h3 className="font-display text-2xl font-bold text-primary-yellow mb-4">Editing.bg</h3>
+            <h3 className="font-display text-2xl font-bold gradient-text mb-4">Editing.bg</h3>
             <p className="text-gray-300 mb-6">
               Професионални услуги за видео монтиране, които трансформират съдържанието ви и увеличават ангажираността.
             </p>
             <div className="flex space-x-4">
               <motion.a 
-                whileHover={{ scale: 1.1, color: '#FFD700' }}
+                whileHover={{ scale: 1.1, color: '#4F46E5' }}
                 href="#" 
-                className="text-gray-400 hover:text-primary-yellow cursor-glow"
+                className="text-gray-400 hover:text-primary-blue cursor-glow"
               >
                 <Youtube className="w-6 h-6" />
               </motion.a>
               <motion.a 
-                whileHover={{ scale: 1.1, color: '#FFD700' }}
+                whileHover={{ scale: 1.1, color: '#7C3AED' }}
                 href="#" 
-                className="text-gray-400 hover:text-primary-yellow cursor-glow"
+                className="text-gray-400 hover:text-primary-purple cursor-glow"
               >
                 <Instagram className="w-6 h-6" />
               </motion.a>
               <motion.a 
-                whileHover={{ scale: 1.1, color: '#FFD700' }}
+                whileHover={{ scale: 1.1, color: '#0D9488' }}
                 href="#" 
-                className="text-gray-400 hover:text-primary-yellow cursor-glow"
+                className="text-gray-400 hover:text-primary-teal cursor-glow"
               >
                 <Mail className="w-6 h-6" />
               </motion.a>
@@ -874,10 +874,10 @@ function Footer() {
           <div>
             <h4 className="font-semibold text-white mb-4">Услуги</h4>
             <ul className="space-y-2 text-gray-300">
-              <li><a href="#" className="hover:text-primary-yellow transition-colors cursor-glow">YouTube монтиране</a></li>
-              <li><a href="#" className="hover:text-primary-yellow transition-colors cursor-glow">Кратко съдържание</a></li>
-              <li><a href="#" className="hover:text-primary-yellow transition-colors cursor-glow">Анимации</a></li>
-              <li><a href="#" className="hover:text-primary-yellow transition-colors cursor-glow">Цветна корекция</a></li>
+              <li><a href="#" className="hover:text-primary-blue transition-colors cursor-glow">YouTube монтиране</a></li>
+              <li><a href="#" className="hover:text-primary-purple transition-colors cursor-glow">Кратко съдържание</a></li>
+              <li><a href="#" className="hover:text-primary-teal transition-colors cursor-glow">Анимации</a></li>
+              <li><a href="#" className="hover:text-primary-blue transition-colors cursor-glow">Цветна корекция</a></li>
             </ul>
           </div>
           
@@ -888,9 +888,9 @@ function Footer() {
               Готови сте да подобрите съдържанието си? Да обсъдим проекта ви!
             </p>
             <motion.button
-              whileHover={{ scale: 1.05, boxShadow: '0 0 20px #FFD700' }}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 20px #4F46E5' }}
               whileTap={{ scale: 0.95 }}
-              className="bg-primary-yellow text-black px-6 py-3 rounded-full font-semibold cursor-glow"
+              className="bg-gradient-primary text-white px-6 py-3 rounded-full font-semibold cursor-glow"
             >
               Свържете се с нас
             </motion.button>
@@ -916,7 +916,7 @@ function FloatingCTA() {
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
         animate={{ y: [0, -10, 0] }}
-        className="bg-primary-yellow text-black p-4 rounded-full shadow-lg cursor-glow animate-glow"
+        className="bg-gradient-primary text-white p-4 rounded-full shadow-lg cursor-glow animate-glow"
       >
         <Mail className="w-6 h-6" />
       </motion.button>
