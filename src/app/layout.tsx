@@ -14,14 +14,20 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Tsvetan Georgiev - Professional Video Editor | @DinamixoBG",
+  metadataBase: new URL(process.env.NODE_ENV === 'production' ? 'https://editing.bg' : 'http://localhost:3000'),
+  title: "editing.bg",
   description: "Transform your footage into scroll-stopping content. Professional video editing services for YouTube, Reels, TikToks, and more. Get viral-ready content that boosts engagement.",
   keywords: "video editing, YouTube editor, content creator, video production, DinamixoBG, Tsvetan Georgiev",
+  icons: {
+    icon: '/32x32logo.png',
+    shortcut: '/32x32logo.png',
+    apple: '/32x32logo.png',
+  },
   openGraph: {
-    title: "Tsvetan Georgiev - Professional Video Editor",
+    title: "editing.bg",
     description: "Transform your footage into scroll-stopping content",
     url: "https://dinamixobg.com",
-    siteName: "@DinamixoBG Portfolio",
+    siteName: "editing.bg",
     images: [
       {
         url: '/og-image.jpg',
@@ -35,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tsvetan Georgiev - Professional Video Editor',
+    title: 'editing.bg',
     description: 'Transform your footage into scroll-stopping content',
     images: ['/og-image.jpg'],
   },
@@ -47,7 +53,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="bg" className="scroll-smooth">
+      <head>
+        <link rel="preload" href="/Editing.png" as="image" />
+        <link rel="preload" href="/32x32logo.png" as="image" />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta name="theme-color" content="#4F46E5" />
+      </head>
       <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>
         {children}
       </body>

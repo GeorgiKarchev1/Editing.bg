@@ -3,8 +3,28 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { PlayCircle, Star, Video, Mail, Youtube, Instagram, MessageCircle, Check, Send } from 'lucide-react'
-import { useState } from 'react'
+import { Star, Video, Youtube, Instagram, MessageCircle, Check, Send } from 'lucide-react'
+
+// TikTok SVG Icon Component
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M19.321 5.562a5.124 5.124 0 0 1-.443-.258 6.228 6.228 0 0 1-1.137-.966c-.849-1.04-1.3-2.446-1.3-3.838v-.364c0-.033-.024-.06-.055-.067C16.335.068 16.284.068 16.232.068h-3.204c-.068 0-.123.055-.123.122v11.335c0 .033 0 .065-.005.098-.005.033-.012.065-.019.098a3.076 3.076 0 0 1-1.482 2.072c-.43.258-.93.401-1.463.401-1.615 0-2.927-1.312-2.927-2.927 0-1.615 1.312-2.927 2.927-2.927.344 0 .674.06.98.169.068.024.143-.019.143-.091V5.562c0-.055-.036-.103-.088-.12a6.685 6.685 0 0 0-1.035-.081c-3.682 0-6.67 2.988-6.67 6.67 0 1.731.66 3.307 1.744 4.493.024.026.05.05.077.074 1.186 1.084 2.762 1.744 4.493 1.744 3.682 0 6.67-2.988 6.67-6.67V7.721c1.2.674 2.633 1.061 4.193 1.061.068 0 .123-.055.123-.122V5.684c0-.043-.022-.081-.057-.104-.43-.289-.817-.637-1.137-1.018Z"/>
+  </svg>
+)
+import { useState, lazy, Suspense, useEffect, useRef } from 'react'
+import Link from 'next/link'
+import emailjs from '@emailjs/browser'
+
+// Lazy load heavy components
+const LazyTestimonialsSection = lazy(() => Promise.resolve({ default: TestimonialsSection }))
+const LazyAboutSection = lazy(() => Promise.resolve({ default: AboutSection }))
+const LazyContactSection = lazy(() => Promise.resolve({ default: ContactSection }))
+const LazyFooter = lazy(() => Promise.resolve({ default: Footer }))
 
 function ParallaxBackground() {
   const { scrollYProgress } = useScroll()
@@ -58,51 +78,177 @@ export default function Home() {
       <ParallaxBackground />
       <NavigationBar />
       <HeroSection />
-      <PortfolioSection />
-      <TestimonialsSection />
-      <AboutSection />
-      <ContactSection />
-      <Footer />
+      <Suspense fallback={<div className="h-20"></div>}>
+        <LazyTestimonialsSection />
+      </Suspense>
+      <Suspense fallback={<div className="h-20"></div>}>
+        <LazyAboutSection />
+      </Suspense>
+      <Suspense fallback={<div className="h-20"></div>}>
+        <LazyContactSection />
+      </Suspense>
+      <Suspense fallback={<div className="h-20"></div>}>
+        <LazyFooter />
+      </Suspense>
       <FloatingCTA />
     </main>
   )
 }
 
 function NavigationBar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const menuItems = [
+    { name: 'Портфолио', href: '/portfolio' },
+    { name: 'За нас', href: '#about' },
+    { name: 'Отзиви', href: '#testimonials' },
+    { name: 'Свържи се', href: '#contact' }
+  ]
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false)
+      }
+    }
+
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMenuOpen(false)
+      }
+    }
+
+    const handleScroll = () => {
+      setIsMenuOpen(false)
+    }
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleKeyDown)
+      document.addEventListener('scroll', handleScroll)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMenuOpen])
+
+  // Close menu when route changes and on initial load
+  useEffect(() => {
+    setIsMenuOpen(false)
+    document.body.style.overflow = 'unset'
+    
+    // Cleanup on page unload
+    const handleBeforeUnload = () => {
+      document.body.style.overflow = 'unset'
+    }
+    
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      document.body.style.overflow = 'unset'
+    }
+  }, [])
+
   return (
     <motion.nav 
+      ref={menuRef}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/80 backdrop-blur-lg border-b border-dark-border"
+      className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/95 backdrop-blur-lg border-b border-dark-border shadow-lg"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 sm:h-20">
           <motion.a
             href="#hero"
             whileHover={{ scale: 1.05 }}
-            className="font-display font-bold text-xl gradient-text cursor-pointer"
+            className="cursor-pointer"
           >
-            Editing.bg
+            <img 
+              src="/Editing.png" 
+              alt="Editing.bg" 
+              className="h-12 sm:h-16 w-auto drop-shadow-lg hover:drop-shadow-xl transition-all duration-300"
+              style={{ filter: 'drop-shadow(0 0 8px rgba(79, 70, 229, 0.3))' }}
+            />
           </motion.a>
           
-          <div className="hidden md:flex space-x-8">
-            {[
-              { name: 'Портфолио', href: 'portfolio' },
-              { name: 'За нас', href: 'about' },
-              { name: 'Отзиви', href: 'testimonials' },
-              { name: 'Свържи се', href: 'contact' }
-            ].map((item) => (
-              <motion.a
-                key={item.name}
-                href={`#${item.href}`}
-                whileHover={{ scale: 1.1, color: '#4F46E5' }}
-                className="text-gray-300 hover:text-primary-blue transition-colors cursor-glow"
-              >
-                {item.name}
-              </motion.a>
+          {/* Desktop Menu */}
+          <div className="hidden md:flex space-x-10">
+            {menuItems.map((item) => (
+              <Link key={item.name} href={item.href}>
+                <motion.div
+                  whileHover={{ scale: 1.1, color: '#4F46E5' }}
+                  className="text-gray-200 hover:text-primary-blue transition-colors cursor-glow font-medium text-lg"
+                >
+                  {item.name}
+                </motion.div>
+              </Link>
             ))}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsMenuOpen(!isMenuOpen)
+            }}
+            className="md:hidden p-2 rounded-md text-gray-200 hover:text-primary-blue transition-colors focus:outline-none"
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle navigation menu"
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {isMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="md:hidden py-4 border-t border-dark-border bg-dark-bg/98 backdrop-blur-lg shadow-xl"
+            role="menu"
+            aria-orientation="vertical"
+          >
+            {menuItems.map((item) => (
+              <Link key={item.name} href={item.href}>
+                <div
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    document.body.style.overflow = 'unset'
+                  }}
+                  className="block px-4 py-3 text-gray-200 hover:text-primary-blue hover:bg-dark-card transition-colors font-medium cursor-pointer"
+                >
+                  {item.name}
+                </div>
+              </Link>
+            ))}
+          </motion.div>
+        )}
       </div>
     </motion.nav>
   )
@@ -118,7 +264,7 @@ function HeroSection() {
   const floatingY2 = useTransform(scrollYProgress, [0, 1], [0, -250])
   
   return (
-    <section id="hero" ref={ref} className="min-h-screen flex items-center justify-center relative overflow-hidden bg-noise pt-20">
+    <section id="hero" ref={ref} className="min-h-[100dvh] xs:min-h-[90vh] sm:min-h-screen flex items-center justify-center relative overflow-hidden bg-noise pt-16 sm:pt-24 pb-8 xs:pb-10 sm:pb-16">
       {/* Background Video Placeholder */}
       <div className="absolute inset-0 bg-gradient-to-br from-dark-bg via-dark-card to-dark-bg opacity-90"></div>
       
@@ -148,28 +294,28 @@ function HeroSection() {
       
       <motion.div 
         style={{ y: heroY, opacity: heroOpacity }}
-        className="relative z-10 text-center max-w-4xl mx-auto px-4"
+        className="relative z-10 text-center max-w-4xl md:max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 flex flex-col justify-center min-h-[70vh] xs:min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[85vh]"
       >
         <motion.h1 
           initial={{ opacity: 0, y: 50 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-relaxed tracking-wide"
+          className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-3 xs:mb-4 sm:mb-6 leading-tight xs:leading-snug sm:leading-relaxed tracking-wide"
         >
           Превърни видеата си в{' '}
-          <br className="hidden sm:block" />
           <motion.span 
             animate={{ textShadow: ['0 0 20px #4F46E5', '0 0 40px #7C3AED', '0 0 20px #4F46E5'] }}
             className="gradient-text"
           >
             завладяващо
-          </motion.span>{' '}
+          </motion.span>
+          <br className="hidden xs:block" />
           съдържание
         </motion.h1>
         
         <motion.p 
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto"
+          className="text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 xs:mb-8 sm:mb-10 md:mb-12 max-w-2xl mx-auto px-2 sm:px-0 leading-relaxed"
         >
           Професионално видео монтиране, което прави съдържанието ти да блести. От суров материал до готови за вайръл шедьоври.
         </motion.p>
@@ -177,45 +323,48 @@ function HeroSection() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+          className="flex flex-col xs:flex-row gap-3 xs:gap-4 sm:gap-4 justify-center items-stretch px-4 sm:px-0 max-w-sm xs:max-w-lg sm:max-w-none mx-auto mb-6 xs:mb-8 sm:mb-10 md:mb-12 lg:mb-16"
         >
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: '0 0 30px #4F46E5' }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-gradient-primary text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center gap-2 cursor-glow animate-glow"
-          >
-            <PlayCircle className="w-6 h-6" />
-            Виж работата ни
-          </motion.button>
+          <Link href="/portfolio" className="flex-1 xs:flex-none">
+            <motion.button
+              whileHover={{ scale: 1.05, boxShadow: '0 0 30px #4F46E5' }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full xs:w-auto bg-gradient-primary text-white px-4 xs:px-6 sm:px-8 py-3 xs:py-3 sm:py-4 rounded-full font-semibold text-sm xs:text-base sm:text-lg flex items-center justify-center gap-2 cursor-glow animate-glow min-w-[180px] xs:min-w-[200px]"
+            >
+              <img src="/32x32logo.png" alt="Play" className="w-4 h-4 xs:w-5 xs:h-5 sm:w-6 sm:h-6" />
+              Виж работата ни
+            </motion.button>
+          </Link>
           
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="border-2 border-primary-blue text-primary-blue px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-blue hover:text-white transition-all cursor-glow"
+            onClick={() => {
+              document.getElementById('contact')?.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }}
+            className="w-full xs:w-auto border-2 border-primary-blue text-primary-blue px-4 xs:px-6 sm:px-8 py-3 xs:py-3 sm:py-4 rounded-full font-semibold text-sm xs:text-base sm:text-lg hover:bg-primary-blue hover:text-white transition-all cursor-glow min-w-[180px] xs:min-w-[200px]"
           >
             Да работим заедно
           </motion.button>
         </motion.div>
         
-        {/* Video Demo Placeholder */}
+        {/* Video Demo Trailer */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={inView ? { opacity: 1, scale: 1 } : {}}
-          className="mt-16 relative max-w-4xl mx-auto"
+          className="relative w-full max-w-xs xs:max-w-sm sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 sm:px-2 md:px-8 lg:px-12"
         >
-          <div className="aspect-video bg-dark-card rounded-2xl glow-border overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-blue/20 via-primary-purple/20 to-primary-teal/20"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <motion.div 
-                whileHover={{ scale: 1.1 }}
-                className="w-20 h-20 bg-gradient-primary rounded-full flex items-center justify-center cursor-pointer"
-              >
-                <PlayCircle className="w-10 h-10 text-white" />
-              </motion.div>
-            </div>
-            <div className="absolute bottom-4 left-4 text-sm text-gray-400">
-              Демо ролка - Най-доброто от 2024
-            </div>
+          <div className="aspect-video bg-dark-card rounded-lg xs:rounded-xl sm:rounded-2xl glow-border overflow-hidden relative">
+            <iframe
+              src="https://www.youtube.com/embed/dIxYtz-Xln8?autoplay=1&mute=0&controls=1&showinfo=0&rel=0&modestbranding=1&loop=1&playlist=dIxYtz-Xln8&start=0"
+              title="Editing.bg Demo Reel"
+              className="w-full h-full rounded-lg xs:rounded-xl sm:rounded-2xl"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture; accelerometer; gyroscope"
+              allowFullScreen
+            ></iframe>
           </div>
         </motion.div>
       </motion.div>
@@ -223,224 +372,7 @@ function HeroSection() {
   )
 }
 
-function PortfolioSection() {
-  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  const { scrollYProgress } = useScroll()
-  
-  const portfolioY = useTransform(scrollYProgress, [0.2, 0.8], [50, -50])
-  
-  const portfolioItems = [
-    { 
-      id: 1, 
-      title: 'Опитах да Изям и После да Изгоря 10,000 Калории!', 
-      category: 'YouTube', 
-      thumbnail: 'https://img.youtube.com/vi/74TqZqnJeLQ/maxresdefault.jpg', 
-      type: 'video',
-      link: 'https://www.youtube.com/watch?v=74TqZqnJeLQ&t=407s'
-    },
-    { 
-      id: 2, 
-      title: 'ПОБЕДИХ без да Слизам от ВЛАКА нито за Секунда!', 
-      category: 'YouTube', 
-      thumbnail: 'https://img.youtube.com/vi/W0gkVildfsM/maxresdefault.jpg', 
-      type: 'video',
-      link: 'https://youtu.be/W0gkVildfsM'
-    },
-    { 
-      id: 3, 
-      title: 'Играем RANKED, но Всеки Има Различна РОЛЯ Спрямо Оръжията!', 
-      category: 'YouTube', 
-      thumbnail: 'https://img.youtube.com/vi/a0dCq9KwouM/maxresdefault.jpg', 
-      type: 'video',
-      link: 'https://youtu.be/a0dCq9KwouM'
-    },
-    { 
-      id: 4, 
-      title: '4-ма Куитнали Играят 2v2 (Пълна Лудница)', 
-      category: 'YouTube', 
-      thumbnail: 'https://img.youtube.com/vi/qVTic6OSJnc/maxresdefault.jpg', 
-      type: 'video',
-      link: 'https://youtu.be/qVTic6OSJnc'
-    },
-    { 
-      id: 5, 
-      title: 'ПОБЕДИХ В UNREAL НА ВСЕКИ ЕДИН РЕГИОН!', 
-      category: 'YouTube', 
-      thumbnail: 'https://img.youtube.com/vi/u0ajh-PXGhk/maxresdefault.jpg', 
-      type: 'video',
-      link: 'https://youtu.be/u0ajh-PXGhk'
-    },
-    { 
-      id: 6, 
-      title: '1лв vs 70,000лв Fortnite Акаунт!', 
-      category: 'YouTube', 
-      thumbnail: 'https://img.youtube.com/vi/KxUdZGz1M88/maxresdefault.jpg', 
-      type: 'video',
-      link: 'https://www.youtube.com/watch?v=KxUdZGz1M88&t=289s'
-    },
-    {
-      id: 7,
-      title: 'Работа Преди и След Трансформацията',
-      category: 'Shorts',
-      link: "https://youtube.com/shorts/KtpY-yzXTCk?feature=share",
-      thumbnail: "https://img.youtube.com/vi/KtpY-yzXTCk/maxresdefault.jpg",
-      type: "video",
-    },
-    {
-      id: 8,
-      title: 'Mr. Airpod Компилация V2',
-      category: 'Shorts',
-      link: "https://youtube.com/shorts/cs9b2SemtA0?feature=share",
-      thumbnail: "https://img.youtube.com/vi/cs9b2SemtA0/maxresdefault.jpg",
-      type: "video",
-    },
-    {
-      id: 9,
-      title: 'Vonster Кратки Акценти',
-      category: 'Shorts',
-      link: "https://youtube.com/shorts/I6njVaxRkf8?feature=share",
-      thumbnail: "https://img.youtube.com/vi/I6njVaxRkf8/maxresdefault.jpg",
-      type: "video",
-    },
-  ]
-  
-  return (
-    <section id="portfolio" ref={ref} className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        className="text-center mb-16"
-      >
-        <h2 className="font-display text-4xl md:text-6xl font-bold mb-6">
-           <span className="gradient-text">Портфолио</span>
-        </h2>
-        <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-          Виж някои от последните ни работи, които генерират гледания и ангажираност
-        </p>
-      </motion.div>
-      
 
-      
-      {/* Portfolio Grid */}
-      <motion.div 
-        style={{ y: portfolioY }}
-        layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-      >
-        {portfolioItems.map((item) => (
-          <motion.div
-            key={item.id}
-            layout
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="group relative bg-dark-card rounded-2xl overflow-hidden border border-dark-border hover:border-primary-blue hover:shadow-lg hover:shadow-primary-blue/20 transition-all duration-300 ease-out"
-          >
-            {/* Thumbnail */}
-            <div 
-              className="aspect-video bg-gradient-to-br from-primary-blue/20 via-primary-purple/20 to-primary-teal/20 relative overflow-hidden cursor-pointer"
-              onClick={() => {
-                if (item.link) {
-                  window.open(item.link, '_blank');
-                }
-              }}
-            >
-                            {false ? (
-                /* Local Video Thumbnail */
-                <img 
-                  src={item.thumbnail} 
-                  alt={item.title}
-                  className={`w-full h-full ${
-                    item.title === 'Vonster Short Highlights' || item.title === 'Mr. Airpod Compilation V2' 
-                      ? 'object-cover object-center' 
-                      : 'object-cover'
-                  }`}
-                  style={
-                    item.title === 'Vonster Short Highlights' || item.title === 'Mr. Airpod Compilation V2'
-                      ? { objectPosition: 'center center' }
-                      : {}
-                  }
-                  onError={(e) => {
-                    e.currentTarget.src = '/api/placeholder/400/300'
-                  }}
-                />
-              ) : (
-                /* YouTube Thumbnail */
-                <img 
-                  src={item.thumbnail} 
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.currentTarget.src = '/api/placeholder/400/300'
-                  }}
-                />
-              )}
-              
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-300"></div>
-              
-              {/* Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div 
-                  whileHover={{ scale: 1.15, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-16 h-16 bg-primary-blue/90 group-hover:bg-gradient-primary rounded-full flex items-center justify-center backdrop-blur-sm transition-colors duration-300"
-                >
-                  <PlayCircle className="w-8 h-8 text-white" />
-                </motion.div>
-              </div>
-              
-
-              
-              {/* Video Type Badge */}
-              <div className={`absolute top-4 left-4 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 ${
-                false 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-red-600 text-white'
-              }`}>
-                {false ? (
-                  <>
-                    <Video className="w-4 h-4" />
-                    Short
-                  </>
-                ) : (
-                  <>
-                    <Youtube className="w-4 h-4" />
-                    YouTube
-                  </>
-                )}
-              </div>
-            </div>
-            
-            {/* Content */}
-            <div className="p-6">
-              <h3 className="font-display text-lg font-semibold mb-3 group-hover:text-primary-blue transition-colors leading-tight line-clamp-2 min-h-[3.5rem]">
-                {item.title}
-              </h3>
-              <p className="text-gray-400 text-sm mb-4">
-                Професионален видео монтаж • Цветна корекция • Анимации
-              </p>
-              {false ? (
-                                  <div className="inline-flex items-center gap-2 text-primary-blue text-sm font-medium">
-                    <Video className="w-4 h-4" />
-                    Кликни за да изгледаш шорта
-                  </div>
-              ) : (
-                <a 
-                  href={item.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary-blue hover:text-primary-purple transition-colors text-sm font-medium"
-                >
-                  <Youtube className="w-4 h-4" />
-                  YouTube
-                </a>
-              )}
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </section>
-  )
-}
 
 function TestimonialsSection() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 })
@@ -448,30 +380,30 @@ function TestimonialsSection() {
   const testimonials = [
     {
       id: 1,
-      name: 'Алекс Джонсън',
+      name: 'Dan4o',
       role: 'Създател на съдържание',
-      avatar: '/api/placeholder/60/60',
-      content: 'Editing.bg превърнаха суровия ми материал в нещо невероятно. Видеата ми сега получават 10 пъти повече ангажираност!',
+      avatar: '/dan4opfp.jpg',
+      content: 'Казвах какво искам, те го правеха още по-добре! Това ми стига.',
       rating: 5,
       platform: 'YouTube'
     },
     {
       id: 2,
-      name: 'Мария Гарсия',
-      role: 'Инфлуенсър',
-      avatar: '/api/placeholder/60/60',
-      content: 'Стилът на монтиране е точно това, от което се нуждаех за бранда ми. Професионално, креативно и винаги навреме.',
+      name: 'Vonster',
+      role: 'Създател на съдържание',
+      avatar: '/vonsterpfp.jpg',
+      content: 'Брутален монтажист с уникално виждане над нещата и бързо работно време! Препоръчвам го с две ръце, много е талантлив! ',
       rating: 5,
-      platform: 'Instagram'
+      platform: 'YouTube'
     },
     {
       id: 3,
-      name: 'Давид Чен',
+      name: 'GB Hustle',
       role: 'Бизнес собственик',
-      avatar: '/api/placeholder/60/60',
-      content: 'Видеата ми за продукти станаха вайръл след като Editing.bg ги монтираха. Възвръщаемостта на инвестицията е невероятна.',
+      avatar: '/gbpfp.jpg',
+      content: 'Работил съм с бая едитори – тези определено са машини! Оправяли са ми всякакви поръчки – от компилации до реклами, винаги с уникален стил.',
       rating: 5,
-      platform: 'TikTok'
+      platform: 'Instagram'
     }
   ]
   
@@ -491,9 +423,9 @@ function TestimonialsSection() {
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
           {testimonials.map((testimonial) => (
-            <div key={testimonial.id} className="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-primary-blue/50 transition-all">
+            <div key={testimonial.id} className="bg-dark-card p-8 rounded-2xl border border-dark-border hover:border-primary-blue/50 transition-all h-full flex flex-col">
               {/* Stars */}
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
@@ -502,17 +434,25 @@ function TestimonialsSection() {
               </div>
               
               {/* Content */}
-              <p className="text-gray-300 mb-6 italic">
+              <p className="text-gray-300 mb-6 italic flex-1">
 {testimonial.content}
               </p>
               
               {/* Author */}
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-white font-bold">
-                  {testimonial.name.charAt(0)}
+              <div className="flex items-center gap-4 mt-auto">
+                <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gradient-to-br from-primary-blue/20 to-primary-purple/20">
+                  <img 
+                    src={testimonial.avatar} 
+                    alt={testimonial.name}
+                    className="w-full h-full object-cover object-center"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjNEY0NkU1IiByeD0iMzIiLz4KPHN2ZyB4PSIxNiIgeT0iMTYiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj4KPHBhdGggZD0iTTIwIDIxdi0yYTQgNCAwIDAgMC00LTRIOGE0IDQgMCAwIDAtNCA0djIiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI3IiByPSI0Ii8+Cjwvc3ZnPgo8L3N2Zz4K';
+                    }}
+                  />
                 </div>
-                <div>
-                  <h4 className="font-semibold text-white">{testimonial.name}</h4>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-white text-lg">{testimonial.name}</h4>
                   <p className="text-sm text-gray-400">{testimonial.role} • {testimonial.platform}</p>
                 </div>
               </div>
@@ -633,13 +573,12 @@ function AboutSection() {
               CTO/COO
             </p>
             <p className="text-gray-300 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
-              Технически лидер и директор по операциите на Editing.bg, комбиниращ най-съвременните технологии с творческо съвършенство. 
-              Експерт в техническите иновации и оптимизиране на работните процеси за максимална ефективност и качество.
+              Технически лидер и директор по операциите на Editing.bg, комбиниращ най-съвременните технологии с творческо съвършенство за постигане на максимална ефективност.
             </p>
             
             {/* Skills/Specialties */}
             <div className="flex flex-wrap gap-3 justify-center">
-              {['Технически иновации', 'Операции', 'Осигуряване на качеството'].map((skill) => (
+              {['Технологии', 'Операции', 'Качество'].map((skill) => (
                 <span key={skill} className="bg-primary-purple/20 text-primary-purple px-4 py-2 rounded-full text-sm font-semibold">
                   {skill}
                 </span>
@@ -667,17 +606,39 @@ function ContactSection() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    
-    // Reset form after success message
-    setTimeout(() => {
-      setIsSubmitted(false)
-      setFormData({ name: '', email: '', message: '', projectType: 'YouTube Video' })
-    }, 3000)
+    try {
+      // EmailJS configuration
+      const serviceID = 'service_jq0e74u'
+      const templateID = 'template_x61try6'
+      const publicKey = '_p5yL0fV4S2zKjK4c'
+      
+      // Prepare template params
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        project_type: formData.projectType,
+        message: formData.message,
+        to_email: 'editing.bg.official@gmail.com'
+      }
+      
+      // Send email using EmailJS
+      await emailjs.send(serviceID, templateID, templateParams, publicKey)
+      
+      // Show success message
+      setIsSubmitted(true)
+      
+      // Reset form after success message
+      setTimeout(() => {
+        setIsSubmitted(false)
+        setFormData({ name: '', email: '', message: '', projectType: 'YouTube Video' })
+      }, 3000)
+      
+    } catch (error) {
+      console.error('Error sending email:', error)
+      alert('Възникна грешка при изпращането на съобщението. Моля опитайте отново.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -818,14 +779,24 @@ function ContactSection() {
             >
               <p className="text-gray-400 mb-4">Или се свържете директно:</p>
               <div className="flex justify-center gap-8">
-                <div className="flex items-center gap-2 text-gray-300">
-                  <Mail className="w-5 h-5 text-primary-blue" />
-                  <span>hello@editing.bg</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-300">
-                  <MessageCircle className="w-5 h-5 text-primary-purple" />
-                  <span>Telegram: @editingbg</span>
-                </div>
+                <a 
+                  href="https://instagram.com/editing.bg_" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-gray-300 hover:text-primary-blue transition-colors cursor-pointer"
+                >
+                  <Instagram className="w-5 h-5 text-primary-blue" />
+                  <span>@editing.bg_</span>
+                </a>
+                <a 
+                  href="https://tiktok.com/@editing.bg_" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-gray-300 hover:text-primary-purple transition-colors cursor-pointer"
+                >
+                  <TikTokIcon className="w-5 h-5 text-primary-purple" />
+                  <span>TikTok: @editing.bg_</span>
+                </a>
               </div>
             </motion.div>
           </motion.div>
@@ -840,8 +811,8 @@ function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand */}
-          <div>
-            <h3 className="font-display text-2xl font-bold gradient-text mb-4">Editing.bg</h3>
+          <div className="text-left">
+            <img src="/Editing.png" alt="Editing.bg" className="h-16 mb-4 block" />
             <p className="text-gray-300 mb-6">
               Професионални услуги за видео монтиране, които трансформират съдържанието ви и увеличават ангажираността.
             </p>
@@ -865,7 +836,7 @@ function Footer() {
                 href="#" 
                 className="text-gray-400 hover:text-primary-teal cursor-glow"
               >
-                <Mail className="w-6 h-6" />
+                <MessageCircle className="w-6 h-6" />
               </motion.a>
             </div>
           </div>
@@ -890,6 +861,12 @@ function Footer() {
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: '0 0 20px #4F46E5' }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                document.getElementById('contact')?.scrollIntoView({ 
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+              }}
               className="bg-gradient-primary text-white px-6 py-3 rounded-full font-semibold cursor-glow"
             >
               Свържете се с нас
@@ -898,7 +875,7 @@ function Footer() {
         </div>
         
         <div className="border-t border-dark-border pt-8 text-center text-gray-400">
-          <p>&copy; 2024 Editing.bg. Всички права запазени.</p>
+          <p>&copy; 2025 Editing.bg. Всички права запазени.</p>
         </div>
       </div>
     </footer>
@@ -916,9 +893,15 @@ function FloatingCTA() {
         whileHover={{ scale: 1.1, rotate: 5 }}
         whileTap={{ scale: 0.9 }}
         animate={{ y: [0, -10, 0] }}
+        onClick={() => {
+          document.getElementById('contact')?.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }}
         className="bg-gradient-primary text-white p-4 rounded-full shadow-lg cursor-glow animate-glow"
       >
-        <Mail className="w-6 h-6" />
+        <MessageCircle className="w-6 h-6" />
       </motion.button>
     </motion.div>
   )
