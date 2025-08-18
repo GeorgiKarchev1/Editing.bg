@@ -7,12 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "deploy": "./deploy.sh"
+    "deploy": "./deploy.sh",
+    "test:email": "node test-email.js",
+    "build:production": "NODE_ENV=production next build",
+    "start:production": "NODE_ENV=production next start"
   },
   "dependencies": {
-    "@emailjs/browser": "^4.4.1",
     "@heroicons/react": "^2.2.0",
     "@types/nodemailer": "^6.4.17",
+    "dotenv": "^16.4.5",
     "framer-motion": "^12.17.3",
     "lucide-react": "^0.514.0",
     "next": "15.3.3",

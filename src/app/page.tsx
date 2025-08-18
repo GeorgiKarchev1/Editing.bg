@@ -3,7 +3,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { Star, Video, Youtube, Instagram, MessageCircle, Check, Send } from 'lucide-react'
+import { Star, Video, Youtube, Instagram, MessageCircle } from 'lucide-react'
 
 // TikTok SVG Icon Component
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -18,7 +18,7 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 )
 import { useState, lazy, Suspense, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import emailjs from '@emailjs/browser'
+import ContactForm from '@/components/ContactForm'
 
 // Lazy load heavy components
 const LazyTestimonialsSection = lazy(() => Promise.resolve({ default: TestimonialsSection }))
@@ -593,59 +593,13 @@ function AboutSection() {
 
 function ContactSection() {
   const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-    projectType: 'YouTube Video'
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    try {
-      // EmailJS configuration
-      const serviceID = 'service_jq0e74u'
-      const templateID = 'template_x61try6'
-      const publicKey = '_p5yL0fV4S2zKjK4c'
-      
-      // Prepare template params
-      const templateParams = {
-        from_name: formData.name,
-        from_email: formData.email,
-        project_type: formData.projectType,
-        message: formData.message,
-        to_email: 'editing.bg.official@gmail.com'
-      }
-      
-      // Send email using EmailJS
-      await emailjs.send(serviceID, templateID, templateParams, publicKey)
-      
-      // Show success message
-      setIsSubmitted(true)
-      
-      // Reset form after success message
-      setTimeout(() => {
-        setIsSubmitted(false)
-        setFormData({ name: '', email: '', message: '', projectType: 'YouTube Video' })
-      }, 3000)
-      
-    } catch (error) {
-      console.error('Error sending email:', error)
-      alert('Възникна грешка при изпращането на съобщението. Моля опитайте отново.')
-    } finally {
-      setIsSubmitting(false)
-    }
+  const handleSuccess = () => {
+    console.log('Contact form submitted successfully')
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
+  const handleError = (error: string) => {
+    console.error('Contact form error:', error)
   }
   
   return (
@@ -665,111 +619,17 @@ function ContactSection() {
         </motion.div>
         
         {/* Contact Form */}
-            <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 50 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
           className="max-w-3xl mx-auto"
         >
           <div className="bg-dark-card p-12 rounded-2xl border border-dark-border">
-              {isSubmitted ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center py-12"
-                >
-                  <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Check className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Съобщението е изпратено!</h3>
-                  <p className="text-gray-400">Ще се свържем с вас в рамките на 24 часа.</p>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Вашето име
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-blue focus:outline-none transition-colors"
-                      placeholder="Въведете вашето име"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Имейл адрес
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-blue focus:outline-none transition-colors"
-                      placeholder="вашия@имейл.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Тип проект
-                    </label>
-                    <select
-                      name="projectType"
-                      value={formData.projectType}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white focus:border-primary-blue focus:outline-none transition-colors"
-                    >
-                      <option value="YouTube Video">YouTube видео</option>
-                      <option value="Short Form Content">Кратко съдържание</option>
-                      <option value="Social Media">Социални медии</option>
-                      <option value="Commercial">Реклама</option>
-                      <option value="Other">Друго</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Детайли за проекта
-                    </label>
-                    <textarea
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      required
-                      rows={5}
-                      className="w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:border-primary-blue focus:outline-none transition-colors resize-none"
-                      placeholder="Разкажете ни за вашия проект, график и специфични изисквания..."
-                    />
-                  </div>
-
-                  <motion.button
-                    type="submit"
-                    disabled={isSubmitting}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full bg-gradient-primary text-white py-4 rounded-xl font-semibold hover:bg-gradient-to-r hover:from-primary-blue-dark hover:to-primary-purple-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                        Изпращане...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-5 h-5" />
-                        Изпрати съобщение
-                      </>
-                    )}
-              </motion.button>
-                </form>
-              )}
-            </div>
+            <ContactForm 
+              onSuccess={handleSuccess}
+              onError={handleError}
+            />
+          </div>
               
             {/* Direct Contact Info */}
               <motion.div

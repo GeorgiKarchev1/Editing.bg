@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Performance optimizations
-  swcMinify: true, // Use SWC minifier for better performance
+  // swcMinify: true, // Use SWC minifier for better performance
   
   // Optimize images for static export
   images: {
@@ -14,18 +14,10 @@ const nextConfig = {
   // Optimize compilation
   experimental: {
     optimizePackageImports: ['framer-motion', 'lucide-react'],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
   },
   
-  // Enable static exports for better performance
-  output: 'export',
+  // Enable standalone output for Plesk
+  output: 'standalone',
   trailingSlash: true,
   
   // Static file optimization
