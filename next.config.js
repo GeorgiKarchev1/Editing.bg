@@ -16,8 +16,8 @@ const nextConfig = {
     optimizePackageImports: ['framer-motion', 'lucide-react'],
   },
   
-  // Enable standalone output for Plesk
-  output: 'standalone',
+  // Vercel configuration
+  // output: 'standalone', // Commented for Vercel
   trailingSlash: true,
   
   // Static file optimization

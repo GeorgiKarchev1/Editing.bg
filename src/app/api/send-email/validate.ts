@@ -53,24 +53,82 @@ export function validateContactForm(data: ContactFormData): { isValid: boolean; 
   }
 }
 
-// Rate limiting функция (проста имплементация)
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>()
+// Подобрена Rate limiting функция
+interface RateLimitEntry {
+  count: number
+  resetTime: number
+  blockedUntil?: number
+}
 
-export function checkRateLimit(ip: string, limit: number = 5, windowMs: number = 15 * 60 * 1000): boolean {
+const rateLimitMap = new Map<string, RateLimitEntry>()
+
+// Автоматично изчистване на стари записи (за да не се запълни паметта)
+setInterval(() => {
+  const now = Date.now()
+  for (const [ip, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetTime && (!entry.blockedUntil || now > entry.blockedUntil)) {
+      rateLimitMap.delete(ip)
+    }
+  }
+}, 60 * 1000) // Изчистване на всяка минута
+
+export function checkRateLimit(
+  ip: string, 
+  limit: number = 5, 
+  windowMs: number = 15 * 60 * 1000, // 15 минути
+  blockDuration: number = 60 * 60 * 1000 // 1 час блокиране
+): boolean {
   const now = Date.now()
   const userData = rateLimitMap.get(ip)
 
-  if (!userData || now > userData.resetTime) {
-    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs })
-    return true
-  }
-
-  if (userData.count >= limit) {
+  // Ако потребителят е блокиран
+  if (userData?.blockedUntil && now < userData.blockedUntil) {
     return false
   }
 
+  // Ако няма данни или времето е изтекло
+  if (!userData || now > userData.resetTime) {
+    rateLimitMap.set(ip, { 
+      count: 1, 
+      resetTime: now + windowMs 
+    })
+    return true
+  }
+
+  // Ако е достигнат лимитът
+  if (userData.count >= limit) {
+    // Блокиране на потребителя
+    userData.blockedUntil = now + blockDuration
+    return false
+  }
+
+  // Увеличаване на брояча
   userData.count++
   return true
+}
+
+// Функция за проверка на оставащите опити
+export function getRemainingAttempts(ip: string, limit: number = 5): number {
+  const userData = rateLimitMap.get(ip)
+  if (!userData) return limit
+  
+  const now = Date.now()
+  if (now > userData.resetTime) return limit
+  
+  return Math.max(0, limit - userData.count)
+}
+
+// Функция за проверка на блокиране
+export function isBlocked(ip: string): boolean {
+  const userData = rateLimitMap.get(ip)
+  if (!userData?.blockedUntil) return false
+  
+  const now = Date.now()
+  if (now < userData.blockedUntil) return true
+  
+  // Премахване на блокирането ако времето е изтекло
+  delete userData.blockedUntil
+  return false
 }
 
 // Sanitize функция за защита от XSS
@@ -78,5 +136,7 @@ export function sanitizeInput(input: string): string {
   return input
     .replace(/[<>]/g, '') // Премахване на < и >
     .replace(/javascript:/gi, '') // Премахване на javascript: протокол
+    .replace(/on\w+=/gi, '') // Премахване на event handlers
+    .replace(/data:/gi, '') // Премахване на data: протокол
     .trim()
 }

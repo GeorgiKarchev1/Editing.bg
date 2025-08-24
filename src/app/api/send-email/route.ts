@@ -2,34 +2,70 @@ import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import { validateContactForm, checkRateLimit, sanitizeInput } from './validate'
 
-// Конфигурация на имейл транспорта за Plesk
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'localhost', // Plesk SMTP сървър
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, // true за 465, false за други портове
-  auth: {
-    user: process.env.SMTP_USER || 'noreply@editing.bg',
-    pass: process.env.SMTP_PASS || '',
-  },
-  tls: {
-    rejectUnauthorized: false // За Plesk сървъри
+// Конфигурация на имейл транспорта за Vercel
+const createTransporter = () => {
+  const host = process.env.SMTP_HOST
+  const port = parseInt(process.env.SMTP_PORT || '587')
+  const user = process.env.SMTP_USER
+  const pass = process.env.SMTP_PASS
+
+  console.log('🔧 SMTP Configuration:', {
+    host,
+    port,
+    user: user ? 'SET' : 'NOT SET',
+    pass: pass ? 'SET' : 'NOT SET'
+  })
+
+  if (!host || !user || !pass) {
+    throw new Error(`SMTP настройките не са конфигурирани правилно. Host: ${host}, User: ${user ? 'SET' : 'NOT SET'}, Pass: ${pass ? 'SET' : 'NOT SET'}`)
   }
-})
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465, // true за 465, false за други портове
+    auth: {
+      user,
+      pass,
+    },
+    tls: {
+      rejectUnauthorized: false // За някои SMTP сървъри
+    }
+  })
+}
 
 export async function POST(request: NextRequest) {
   try {
+    // Проверка на CORS
+    const origin = request.headers.get('origin')
+    const allowedOrigins = [
+      'https://editing.bg',
+      'https://www.editing.bg',
+      'http://localhost:3000',
+      'https://editing-bg.vercel.app'
+    ]
+    
+    if (origin && !allowedOrigins.includes(origin)) {
+      return NextResponse.json(
+        { error: 'CORS не е разрешен за този домейн' },
+        { status: 403 }
+      )
+    }
+
     const body = await request.json()
     
     // Rate limiting
-    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               request.headers.get('cf-connecting-ip') || 
+               'unknown'
+    
     if (!checkRateLimit(ip)) {
       return NextResponse.json(
         { error: 'Твърде много опити за изпращане. Моля опитайте по-късно.' },
         { status: 429 }
       )
     }
-
-
 
     // Sanitize входните данни
     const sanitizedData = {
@@ -50,9 +86,14 @@ export async function POST(request: NextRequest) {
 
     const { name, email, message, projectType } = sanitizedData
 
+    console.log('📧 Подготовка за изпращане на имейл от:', email)
+
+    // Създаване на транспорта
+    const transporter = createTransporter()
+
     // Подготовка на имейл съдържанието
     const mailOptions = {
-      from: `"Editing.bg Contact Form" <${process.env.SMTP_USER || 'noreply@editing.bg'}>`,
+      from: `"Editing.bg Contact Form" <${process.env.SMTP_USER}>`,
       to: 'editing.bg.official@gmail.com', // Вашият имейл адрес
       replyTo: email,
       subject: `Ново запитване от ${name} - ${projectType}`,
@@ -100,6 +141,7 @@ export async function POST(request: NextRequest) {
           <div style="text-align: center; margin-top: 20px; color: #666; font-size: 12px;">
             <p>Това съобщение е изпратено от контакт формата на <a href="https://editing.bg" style="color: #4F46E5;">editing.bg</a></p>
             <p>Време на изпращане: ${new Date().toLocaleString('bg-BG')}</p>
+            <p>IP адрес: ${ip}</p>
           </div>
         </div>
       `,
@@ -116,43 +158,79 @@ ${message}
 ---
 Изпратено от: https://editing.bg
 Време: ${new Date().toLocaleString('bg-BG')}
+IP адрес: ${ip}
       `
     }
+
+    console.log('📤 Опит за изпращане на имейл...')
 
     // Изпращане на имейла
     await transporter.sendMail(mailOptions)
 
     // Логване на успешното изпращане
-    console.log(`Имейл изпратен успешно от ${email} на ${new Date().toISOString()}`)
+    console.log(`✅ Имейл изпратен успешно от ${email} (IP: ${ip}) на ${new Date().toISOString()}`)
 
     return NextResponse.json(
       { 
         success: true, 
         message: 'Съобщението е изпратено успешно! Ще се свържем с вас скоро.' 
       },
-      { status: 200 }
+      { 
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': origin || '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        }
+      }
     )
 
   } catch (error) {
-    console.error('Грешка при изпращане на имейл:', error)
+    console.error('❌ Грешка при изпращане на имейл:', error)
+    
+    // По-детайлни грешки за debugging
+    let errorMessage = 'Възникна грешка при изпращането на съобщението. Моля опитайте отново по-късно.'
+    
+    if (error instanceof Error) {
+      if (error.message.includes('SMTP настройките не са конфигурирани')) {
+        errorMessage = 'Сървърната конфигурация не е правилна. Моля свържете се с администратора.'
+      } else if (error.message.includes('authentication')) {
+        errorMessage = 'Грешка при удостоверяване на имейл сървъра.'
+      } else if (error.message.includes('connection')) {
+        errorMessage = 'Грешка при свързване с имейл сървъра.'
+      } else if (error.message.includes('ECONNREFUSED')) {
+        errorMessage = 'Не може да се свърже с имейл сървъра. Проверете SMTP настройките.'
+      } else if (error.message.includes('EAUTH')) {
+        errorMessage = 'Грешка при удостоверяване. Проверете SMTP_USER и SMTP_PASS.'
+      } else {
+        errorMessage = `Грешка: ${error.message}`
+      }
+    }
     
     return NextResponse.json(
-      { 
-        error: 'Възникна грешка при изпращането на съобщението. Моля опитайте отново по-късно.' 
-      },
+      { error: errorMessage },
       { status: 500 }
     )
   }
 }
 
 // OPTIONS метод за CORS
-export async function OPTIONS() {
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin')
+  const allowedOrigins = [
+    'https://editing.bg',
+    'https://www.editing.bg',
+    'http://localhost:3000',
+    'https://editing-bg.vercel.app'
+  ]
+  
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': allowedOrigins.includes(origin || '') ? origin! : '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
     },
   })
 }
