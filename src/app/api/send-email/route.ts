@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     // Подготовка на имейл съдържанието
     const mailOptions = {
-      from: `"Editing.bg Contact Form" <${process.env.SMTP_USER}>`,
+      from: 'noreply@editing.bg', // Използваме домейн адрес
       to: 'editing.bg.official@gmail.com', // Вашият имейл адрес
       replyTo: email,
       subject: `Ново запитване от ${name} - ${projectType}`,
@@ -202,6 +202,8 @@ IP адрес: ${ip}
         errorMessage = 'Не може да се свърже с имейл сървъра. Проверете SMTP настройките.'
       } else if (error.message.includes('EAUTH')) {
         errorMessage = 'Грешка при удостоверяване. Проверете SMTP_USER и SMTP_PASS.'
+      } else if (error.message.includes('Bad sender address syntax')) {
+        errorMessage = 'Грешка в адреса на подателя. Проверете SMTP настройките.'
       } else {
         errorMessage = `Грешка: ${error.message}`
       }
