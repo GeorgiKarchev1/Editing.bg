@@ -546,7 +546,7 @@ function AboutSection() {
           <div className="relative mb-10">
             <div className="w-80 h-80 mx-auto bg-gradient-to-br from-primary-purple/20 via-primary-teal/20 to-primary-blue/20 rounded-3xl glow-border overflow-hidden">
               <img 
-                src="/azusmihnat.jpg" 
+                src="/azusmihnat_optimized.jpg" 
                 alt="Team Member 2"
                 className="w-full h-full object-cover"
                 onError={(e) => {
