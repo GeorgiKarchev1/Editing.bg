@@ -196,6 +196,7 @@ function NavigationBar() {
 function PortfolioSection() {
   const { scrollYProgress } = useScroll()
   const [activeFilter, setActiveFilter] = useState<'all' | 'YouTube' | 'Shorts'>('all')
+  const [shuffledItems, setShuffledItems] = useState<any[]>([])
   
   const portfolioY = useTransform(scrollYProgress, [0.2, 0.8], [50, -50])
   
@@ -282,7 +283,7 @@ function PortfolioSection() {
     },
     {
       id: 20,
-      title: 'ГОНКИ С НАЙ-БЪРЗОТО BMW M140! (1,030 КОНЯ)',
+      title: 'ПОДОБРИХМЕ БЪЛГАРСКИЯ РЕКОРД ЗА НАЙ-МНОГО КИЛОВЕ',
       category: 'YouTube',
       link: "https://www.youtube.com/watch?v=8QqxE3NnNpQ",
       thumbnail: "https://img.youtube.com/vi/8QqxE3NnNpQ/maxresdefault.jpg",
@@ -298,7 +299,7 @@ function PortfolioSection() {
     },
     {
       id: 22,
-      title: 'ЦЯЛАТА ИСТОРИЯ НА ДРУМЕВ!',
+      title: 'ЗЛОВЕЩАТА ИСТОРИЯ ЗАД 99 НОЩИ В ГОРАТА!',
       category: 'YouTube',
       link: "https://www.youtube.com/watch?v=99IePQq5CnM",
       thumbnail: "https://img.youtube.com/vi/99IePQq5CnM/maxresdefault.jpg",
@@ -538,15 +539,30 @@ function PortfolioSection() {
       },
   ]
   
+  // Shuffle function
+  const shuffleArray = (array: any[]) => {
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }
+  
+  // Shuffle items on component mount
+  useEffect(() => {
+    setShuffledItems(shuffleArray(portfolioItems))
+  }, [])
+  
   // Filter logic
   const filteredItems = activeFilter === 'all' 
-    ? portfolioItems 
-    : portfolioItems.filter(item => item.category === activeFilter)
+    ? shuffledItems 
+    : shuffledItems.filter(item => item.category === activeFilter)
   
   const filterButtons = [
-    { key: 'all', label: 'Всички', count: portfolioItems.length },
-    { key: 'YouTube', label: 'YouTube ', count: portfolioItems.filter(item => item.category === 'YouTube').length },
-    { key: 'Shorts', label: 'Shorts', count: portfolioItems.filter(item => item.category === 'Shorts').length }
+    { key: 'all', label: 'Всички', count: shuffledItems.length },
+    { key: 'YouTube', label: 'YouTube ', count: shuffledItems.filter(item => item.category === 'YouTube').length },
+    { key: 'Shorts', label: 'Shorts', count: shuffledItems.filter(item => item.category === 'Shorts').length }
   ] as const
   
   return (
