@@ -196,7 +196,7 @@ function NavigationBar() {
 function PortfolioSection() {
   const { scrollYProgress } = useScroll()
   const [activeFilter, setActiveFilter] = useState<'all' | 'YouTube' | 'Shorts'>('all')
-  const [shuffledItems, setShuffledItems] = useState<any[]>([])
+  const [shuffledItems, setShuffledItems] = useState<typeof portfolioItems>([])
   
   const portfolioY = useTransform(scrollYProgress, [0.2, 0.8], [50, -50])
   
@@ -540,7 +540,7 @@ function PortfolioSection() {
   ]
   
   // Shuffle function
-  const shuffleArray = (array: any[]) => {
+  const shuffleArray = (array: typeof portfolioItems) => {
     const shuffled = [...array]
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
@@ -552,7 +552,7 @@ function PortfolioSection() {
   // Shuffle items on component mount
   useEffect(() => {
     setShuffledItems(shuffleArray(portfolioItems))
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   
   // Filter logic
   const filteredItems = activeFilter === 'all' 
