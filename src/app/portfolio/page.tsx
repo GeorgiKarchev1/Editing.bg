@@ -556,7 +556,7 @@ function PortfolioSection() {
         if (!res.ok) return
         const data = await res.json()
         setThumbnailItems(data.items as PortfolioItem[])
-      } catch (_) {
+      } catch {
         // no-op
       }
     }

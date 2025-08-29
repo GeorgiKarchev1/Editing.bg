@@ -25,6 +25,7 @@ export async function GET() {
 
     return NextResponse.json({ items })
   } catch (error) {
+    console.error('Failed to read thumbnails directory', error)
     return NextResponse.json({ items: [], error: 'Failed to read thumbnails' }, { status: 500 })
   }
 }
