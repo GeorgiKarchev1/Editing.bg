@@ -195,12 +195,20 @@ function NavigationBar() {
 
 function PortfolioSection() {
   const { scrollYProgress } = useScroll()
-  const [activeFilter, setActiveFilter] = useState<'all' | 'YouTube' | 'Shorts'>('all')
-  const [shuffledItems, setShuffledItems] = useState<typeof portfolioItems>([])
+  type PortfolioItem = {
+    id: number
+    title: string
+    category: 'YouTube' | 'Shorts' | 'Thumbnails'
+    thumbnail: string
+    type: 'video' | 'image'
+    link?: string
+  }
+  const [activeFilter, setActiveFilter] = useState<'all' | 'YouTube' | 'Shorts' | 'Thumbnails'>('all')
+  const [shuffledItems, setShuffledItems] = useState<PortfolioItem[]>([])
   
   const portfolioY = useTransform(scrollYProgress, [0.2, 0.8], [50, -50])
   
-  const portfolioItems = [
+  const portfolioItems: PortfolioItem[] = [
     { 
       id: 1, 
       title: 'Опитах да Изям и После да Изгоря 10,000 Калории!', 
@@ -538,9 +546,27 @@ function PortfolioSection() {
         type: "video",
       },
   ]
+
+  // Thumbnails loaded dynamically from API
+  const [thumbnailItems, setThumbnailItems] = useState<PortfolioItem[]>([])
+  useEffect(() => {
+    const loadThumbnails = async () => {
+      try {
+        const res = await fetch('/api/thumbnails')
+        if (!res.ok) return
+        const data = await res.json()
+        setThumbnailItems(data.items as PortfolioItem[])
+      } catch (_) {
+        // no-op
+      }
+    }
+    loadThumbnails()
+  }, [])
+
+  const allItems: PortfolioItem[] = [...portfolioItems, ...thumbnailItems]
   
   // Shuffle function
-  const shuffleArray = (array: typeof portfolioItems) => {
+  const shuffleArray = (array: PortfolioItem[]) => {
     const shuffled = [...array]
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
@@ -549,20 +575,21 @@ function PortfolioSection() {
     return shuffled
   }
   
-  // Shuffle items on component mount
+  // Shuffle items on component mount and when thumbnails load
   useEffect(() => {
-    setShuffledItems(shuffleArray(portfolioItems))
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    setShuffledItems(shuffleArray(allItems))
+  }, [thumbnailItems]) // eslint-disable-line react-hooks/exhaustive-deps
   
   // Filter logic
   const filteredItems = activeFilter === 'all' 
-    ? shuffledItems 
+    ? shuffledItems.filter(item => item.category !== 'Thumbnails') 
     : shuffledItems.filter(item => item.category === activeFilter)
   
   const filterButtons = [
-    { key: 'all', label: 'Всички', count: shuffledItems.length },
+    { key: 'all', label: 'Всички', count: shuffledItems.filter(item => item.category !== 'Thumbnails').length },
     { key: 'YouTube', label: 'YouTube ', count: shuffledItems.filter(item => item.category === 'YouTube').length },
-    { key: 'Shorts', label: 'Shorts', count: shuffledItems.filter(item => item.category === 'Shorts').length }
+    { key: 'Shorts', label: 'Shorts', count: shuffledItems.filter(item => item.category === 'Shorts').length },
+    { key: 'Thumbnails', label: 'Thumbnails', count: shuffledItems.filter(item => item.category === 'Thumbnails').length },
   ] as const
   
   return (
@@ -628,7 +655,7 @@ function PortfolioSection() {
             transition={{ duration: 0.3 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.98 }}
-            className="group relative bg-dark-card rounded-lg xs:rounded-2xl overflow-hidden border border-dark-border hover:border-primary-blue hover:shadow-lg hover:shadow-primary-blue/20 transition-all duration-300 ease-out"
+            className="group relative rounded-lg xs:rounded-2xl overflow-hidden transition-all duration-300 ease-out"
           >
             {/* Thumbnail */}
             <div 
@@ -648,56 +675,26 @@ function PortfolioSection() {
                 }}
               />
               
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-all duration-300"></div>
-              
-              {/* Play Button Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div 
-                  whileHover={{ scale: 1.15, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  className="w-12 h-12 xs:w-16 xs:h-16 bg-primary-blue/90 group-hover:bg-gradient-primary rounded-full flex items-center justify-center backdrop-blur-sm transition-colors duration-300"
-                >
-                  <img src="/32x32logo.png" alt="Play" className="w-6 h-6 xs:w-8 xs:h-8" />
-                </motion.div>
-              </div>
-              
-              {/* Video Type Badge */}
-              <div className={`absolute top-2 left-2 xs:top-4 xs:left-4 px-2 xs:px-3 py-1 rounded-full text-xs xs:text-sm font-semibold flex items-center gap-1 ${
-                item.category === 'Shorts' 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-red-600 text-white'
-              }`}>
-                {item.category === 'Shorts' ? (
-                  <>
-                    <Video className="w-3 h-3 xs:w-4 xs:h-4" />
-                    Short
-                  </>
-                ) : (
-                  <>
-                    <Youtube className="w-3 h-3 xs:w-4 xs:h-4" />
-                    YouTube
-                  </>
-                )}
-              </div>
-            </div>
-            
-            {/* Content */}
-            <div className="p-4 xs:p-6">
-              <h3 className="font-display text-base xs:text-lg font-semibold mb-2 xs:mb-3 group-hover:text-primary-blue transition-colors leading-tight line-clamp-2 min-h-[3rem] xs:min-h-[3.5rem]">
-                {item.title}
-              </h3>
-              <p className="text-gray-400 text-xs xs:text-sm mb-3 xs:mb-4">
-                Професионален видео монтаж • Цветна корекция • Анимации
-              </p>
-              <a 
-                href={item.link} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary-blue hover:text-primary-purple transition-colors text-xs xs:text-sm font-medium"
-              >
-                <Youtube className="w-3 h-3 xs:w-4 xs:h-4" />
-                Виж видеото
-              </a>
+              {/* Category Badge (hidden for Thumbnails) */}
+              {item.category !== 'Thumbnails' && (
+                <div className={`absolute top-2 left-2 xs:top-4 xs:left-4 px-2 xs:px-3 py-1 rounded-full text-xs xs:text-sm font-semibold flex items-center gap-1 ${
+                  item.category === 'Shorts'
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-red-600 text-white'
+                }`}>
+                  {item.category === 'Shorts' ? (
+                    <>
+                      <Video className="w-3 h-3 xs:w-4 xs:h-4" />
+                      Short
+                    </>
+                  ) : (
+                    <>
+                      <Youtube className="w-3 h-3 xs:w-4 xs:h-4" />
+                      YouTube
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         ))}
