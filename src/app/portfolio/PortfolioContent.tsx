@@ -1,0 +1,565 @@
+'use client'
+
+import { motion, useScroll, useTransform } from 'framer-motion'
+
+import { Video, Youtube, ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
+import { useState, useEffect, useRef } from 'react'
+
+function ParallaxBackground() {
+  const { scrollYProgress } = useScroll()
+  
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -50])
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, -100])
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, -200])
+  const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 360])
+  const rotate2 = useTransform(scrollYProgress, [0, 1], [0, -180])
+  
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <motion.div 
+        style={{ y: y1, rotate: rotate1 }}
+        className="absolute top-20 left-10 w-32 h-32 bg-primary-blue/5 rounded-full blur-xl"
+      />
+      <motion.div 
+        style={{ y: y2, rotate: rotate2 }}
+        className="absolute top-40 right-20 w-24 h-24 bg-primary-purple/10 rounded-full blur-lg"
+      />
+      <motion.div 
+        style={{ y: y3 }}
+        className="absolute bottom-40 left-1/4 w-40 h-40 bg-primary-teal/3 rounded-full blur-2xl"
+      />
+    </div>
+  )
+}
+
+function NavigationBar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const menuItems = [
+    { name: 'Портфолио', href: '/portfolio' },
+    { name: 'За нас', href: '/#about' },
+    { name: 'Отзиви', href: '/#testimonials' },
+    { name: 'Свържи се', href: '/#contact' }
+  ]
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false)
+      }
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false)
+      }
+    }
+
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMenuOpen(false)
+      }
+    }
+
+    const handleScroll = () => {
+      setIsMenuOpen(false)
+    }
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', handleKeyDown)
+      document.addEventListener('scroll', handleScroll)
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMenuOpen])
+
+  // Close menu when route changes and on initial load
+  useEffect(() => {
+    setIsMenuOpen(false)
+    document.body.style.overflow = 'unset'
+    
+    // Cleanup on page unload
+    const handleBeforeUnload = () => {
+      document.body.style.overflow = 'unset'
+    }
+    
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      document.body.style.overflow = 'unset'
+    }
+  }, [])
+
+  return (
+    <motion.nav 
+      ref={menuRef}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/95 backdrop-blur-lg border-b border-dark-border shadow-lg"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16 sm:h-20">
+          <Link href="/">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="cursor-pointer"
+            >
+              <img
+                src="/Editing.png"
+                alt="Editing.bg"
+                className="h-12 sm:h-16 w-auto transition-all duration-300"
+              />
+            </motion.div>
+          </Link>
+          
+          {/* Desktop Menu */}
+          <div className="hidden md:flex space-x-10">
+            {menuItems.map((item) => (
+              <Link key={item.name} href={item.href}>
+                <motion.div
+                  whileHover={{ scale: 1.1, color: '#4F46E5' }}
+                  className="text-gray-200 hover:text-primary-blue transition-colors cursor-glow font-medium text-lg"
+                >
+                  {item.name}
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsMenuOpen(!isMenuOpen)
+            }}
+            className="md:hidden p-2 rounded-md text-gray-200 hover:text-primary-blue transition-colors focus:outline-none"
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle navigation menu"
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              {isMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="md:hidden py-4 border-t border-dark-border bg-dark-bg/98 backdrop-blur-lg shadow-xl"
+            role="menu"
+            aria-orientation="vertical"
+          >
+            {menuItems.map((item) => (
+              <Link key={item.name} href={item.href}>
+                <div
+                  onClick={() => {
+                    setIsMenuOpen(false)
+                    document.body.style.overflow = 'unset'
+                  }}
+                  className="block px-4 py-3 text-gray-200 hover:text-primary-blue hover:bg-dark-card transition-colors font-medium cursor-pointer"
+                >
+                  {item.name}
+                </div>
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </div>
+    </motion.nav>
+  )
+}
+
+function PortfolioSection() {
+  const { scrollYProgress } = useScroll()
+  type PortfolioItem = {
+    id: number
+    title: string
+    category: 'YouTube' | 'Shorts' | 'Thumbnails'
+    thumbnail: string
+    type: 'video' | 'image'
+    link?: string
+  }
+  const [activeFilter, setActiveFilter] = useState<'YouTube' | 'Shorts' | 'Thumbnails'>('YouTube')
+  const [shuffledItems, setShuffledItems] = useState<PortfolioItem[]>([])
+  
+  const portfolioY = useTransform(scrollYProgress, [0.2, 0.8], [50, -50])
+  
+  // Shuffle function
+  const shuffleArray = (array: PortfolioItem[]) => {
+    const shuffled = [...array]
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }
+
+  // Group 1: First 6 videos (always displayed first, but shuffled within the group)
+  const group1Items: PortfolioItem[] = [
+    { 
+      id: 101, 
+      title: 'КУПИХ IPhone 17 PRO на ГАДЖЕТО МИ за КОЛЕДА…БЕШЕ в ШОК!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/i0uC2plSjXs/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://www.youtube.com/watch?v=i0uC2plSjXs' 
+    },
+    { 
+      id: 102, 
+      title: 'ДАДОХ 2000 ЛЕВА НА СЛУЧАЕН ЧОВЕК!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/_DSx5c9ieF0/hqdefault.jpg', 
+      type: 'video', 
+      link: 'https://www.youtube.com/watch?v=_DSx5c9ieF0' 
+    },
+    { 
+      id: 103, 
+      title: 'ЦЯЛАТА ИСТОРИЯ НА ДРУМЕВ!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/VLfUdn4G2a8/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://www.youtube.com/watch?v=VLfUdn4G2a8' 
+    },
+    { 
+      id: 104, 
+      title: 'ЗЛОВЕЩАТА ИСТОРИЯ ЗАД 99 НОЩИ В ГОРАТА!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/99IePQq5CnM/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://www.youtube.com/watch?v=99IePQq5CnM' 
+    },
+    { 
+      id: 105, 
+      title: 'ГЕШЕВ МЕ ВОЗИ В 1,500 КОНЯ КОЛА! (BMW M3)', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/g3Qw0lX29es/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/g3Qw0lX29es' 
+    },
+    { 
+      id: 106, 
+      title: 'ЗАСРАМИХ ИВЧО ПРЕД ЦЯЛА БЪЛГАРИЯ', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/mYtFWcB_GBU/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/mYtFWcB_GBU' 
+    }
+  ]
+
+  // Group 2: Second 6 videos (always displayed second, but shuffled within the group)
+  const group2Items: PortfolioItem[] = [
+    { 
+      id: 201, 
+      title: 'КОЕ ЩЕ СТИГНЕ ПО-БЪРЗО? (CAN-AM VS GOLF)', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/foXab_aGUew/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/foXab_aGUew' 
+    },
+    { 
+      id: 202, 
+      title: 'РАЗКРИХ ТАЙНАТА ЗА БАЙ ИВАН ФИЛМИТЕ!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/A5q3EsuzshA/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/A5q3EsuzshA' 
+    },
+    { 
+      id: 203, 
+      title: 'КОЙ БГ YOUTUBER ИМА НАЙ-ДОБРАТА ПРОМЯНА?', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/qXTppV-ZLdo/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/qXTppV-ZLdo' 
+    },
+    { 
+      id: 204, 
+      title: '1лв vs 70,000лв Fortnite Акаунт!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/KxUdZGz1M88/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/KxUdZGz1M88' 
+    },
+    { 
+      id: 205, 
+      title: 'Опитах да Изям и После да Изгоря 10,000 Калории!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/74TqZqnJeLQ/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/74TqZqnJeLQ' 
+    },
+    { 
+      id: 206, 
+      title: 'Ден в Живота на 18-Годишен!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/Cnu8hwkXTsk/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/Cnu8hwkXTsk' 
+    }
+  ]
+
+  // Group 3: Remaining videos (displayed last, shuffled within the group)
+  const group3Items: PortfolioItem[] = [
+    { 
+      id: 301, 
+      title: 'ГОНКИ С НАЙ-БЪРЗОТО BMW M140! (1,030 КОНЯ)', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/_KxDCwm3y50/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/_KxDCwm3y50' 
+    },
+    { 
+      id: 302, 
+      title: 'ТЕСТВАМЕ НОВИТЕ АУДИТА С ДОБРИН', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/i5VZJdHp1QU/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/i5VZJdHp1QU' 
+    },
+    { 
+      id: 303, 
+      title: 'ПОДОБРИХМЕ БЪЛГАРСКИЯ РЕКОРД ЗА НАЙ-МНОГО КИЛОВЕ', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/8QqxE3NnNpQ/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/8QqxE3NnNpQ' 
+    },
+    { 
+      id: 304, 
+      title: 'ВОЗИХ ЕМРАХ В 1,300 КОНЯ КОЛА! (BMW M5)', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/HiCvLrjSm84/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/HiCvLrjSm84' 
+    },
+    { 
+      id: 305, 
+      title: 'От ЛОНДОН до БЪЛГАРИЯ с НАЙ-ЕВТИНАТА S КЛАСА!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/RD2P4OuSpbA/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://www.youtube.com/watch?v=RD2P4OuSpbA' 
+    },
+    { 
+      id: 306, 
+      title: '4-ма Куитнали Играят 2v2 (Пълна Лудница)', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/qVTic6OSJnc/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/qVTic6OSJnc' 
+    },
+    { 
+      id: 307, 
+      title: 'НОВ РЕКОРД ПО КИЛОВЕ НА OG FORTNITE', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/rI4r_B2NZHs/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/rI4r_B2NZHs' 
+    },
+    { 
+      id: 308, 
+      title: '1 Elimination with EVERY Weapon in ONE Game!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/bCAK3nEoCuQ/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/bCAK3nEoCuQ' 
+    },
+    { 
+      id: 309, 
+      title: 'Bronze to Unreal, but Every Rank = One Spin!', 
+      category: 'YouTube', 
+      thumbnail: 'https://img.youtube.com/vi/ukXO6J3Wan4/maxresdefault.jpg', 
+      type: 'video', 
+      link: 'https://youtu.be/ukXO6J3Wan4' 
+    }
+  ]
+
+  // Shuffle items on component mount
+  useEffect(() => {
+    // Shuffle each group independently
+    const shuffledGroup1 = shuffleArray(group1Items)
+    const shuffledGroup2 = shuffleArray(group2Items)
+    const shuffledGroup3 = shuffleArray(group3Items)
+    
+    // Combine them in order
+    setShuffledItems([...shuffledGroup1, ...shuffledGroup2, ...shuffledGroup3])
+  }, []) // Run once on mount to randomize for this session/refresh
+  
+  // Filter logic
+  const filteredItems = shuffledItems.filter(item => item.category === activeFilter)
+  
+  const filterButtons = [
+    { key: 'YouTube', label: 'YouTube ', count: shuffledItems.filter(item => item.category === 'YouTube').length },
+    { key: 'Shorts', label: 'Shorts', count: shuffledItems.filter(item => item.category === 'Shorts').length },
+    { key: 'Thumbnails', label: 'Thumbnails', count: shuffledItems.filter(item => item.category === 'Thumbnails').length },
+  ] as const
+  
+  return (
+    <section id="portfolio" className="py-8 xs:py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="text-center mb-8 xs:mb-12 sm:mb-16"
+      >
+        <h2 className="font-display text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 xs:mb-4 sm:mb-6">
+           <span className="gradient-text">Портфолио</span>
+        </h2>
+        <p className="text-base xs:text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto px-2 sm:px-0 leading-relaxed">
+          Виж някои от последните ни работи, които генерират гледания и ангажираност
+        </p>
+      </motion.div>
+      
+      {/* Filter Menu */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
+        className="flex flex-wrap justify-center gap-2 xs:gap-3 sm:gap-4 mb-6 xs:mb-8 sm:mb-12 px-2 sm:px-0"
+      >
+        {filterButtons.map((button) => (
+          <motion.button
+            key={button.key}
+            onClick={() => setActiveFilter(button.key)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`px-3 xs:px-4 sm:px-6 py-2 xs:py-2 sm:py-3 rounded-full font-semibold transition-all duration-300 flex items-center gap-1 xs:gap-1 sm:gap-2 text-xs xs:text-sm sm:text-base ${
+              activeFilter === button.key
+                ? 'bg-gradient-primary text-white shadow-lg shadow-primary-blue/20'
+                : 'bg-dark-card text-gray-300 hover:bg-dark-border hover:text-white border border-dark-border'
+            }`}
+          >
+            {button.label}
+            <span className={`text-xs px-1 xs:px-1.5 sm:px-2 py-0.5 xs:py-0.5 sm:py-1 rounded-full ${
+              activeFilter === button.key
+                ? 'bg-white/20 text-white'
+                : 'bg-gray-600 text-gray-300'
+            }`}>
+              {button.count}
+            </span>
+          </motion.button>
+        ))}
+      </motion.div>
+      
+      {/* Portfolio Grid */}
+      <motion.div 
+        style={{ y: portfolioY }}
+        layout
+        className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3 xs:gap-4 sm:gap-6 lg:gap-8"
+      >
+        {filteredItems.map((item) => (
+          <motion.div
+            key={`${activeFilter}-${item.id}`}
+            layout
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            className="group relative rounded-lg xs:rounded-2xl overflow-hidden transition-all duration-300 ease-out"
+          >
+            {/* Thumbnail */}
+            <div 
+              className="aspect-video bg-gradient-to-br from-primary-blue/20 via-primary-purple/20 to-primary-teal/20 relative overflow-hidden cursor-pointer"
+              onClick={() => {
+                if (item.link) {
+                  window.open(item.link, '_blank');
+                }
+              }}
+            >
+              <img
+                src={item.thumbnail}
+                alt={item.title}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src.includes('maxresdefault')) {
+                    target.src = target.src.replace('maxresdefault', 'hqdefault');
+                  } else {
+                    target.style.display = 'none';
+                  }
+                }}
+              />
+              
+              {/* Category Badge (hidden for Thumbnails) */}
+              {item.category !== 'Thumbnails' && (
+                <div className={`absolute top-2 left-2 xs:top-4 xs:left-4 px-2 xs:px-3 py-1 rounded-full text-xs xs:text-sm font-semibold flex items-center gap-1 ${
+                  item.category === 'Shorts'
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-red-600 text-white'
+                }`}>
+                  {item.category === 'Shorts' ? (
+                    <>
+                      <Video className="w-3 h-3 xs:w-4 xs:h-4" />
+                      Short
+                    </>
+                  ) : (
+                    <>
+                      <Youtube className="w-3 h-3 xs:w-4 xs:h-4" />
+                      YouTube
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+      
+      {/* Back to Home Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.8 }}
+        className="text-center mt-8 xs:mt-12 sm:mt-16"
+      >
+        <Link href="/">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="bg-gradient-primary text-white px-6 xs:px-8 py-3 xs:py-4 rounded-full font-semibold text-base xs:text-lg flex items-center gap-2 mx-auto cursor-glow"
+          >
+            <ArrowLeft className="w-4 h-4 xs:w-5 xs:h-5" />
+            Обратно към началото
+          </motion.button>
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
+export default function PortfolioContent() {
+  return (
+    <main className="min-h-screen bg-dark-bg text-white overflow-x-hidden relative">
+      <ParallaxBackground />
+      <NavigationBar />
+      <div className="pt-16 sm:pt-24">
+        <PortfolioSection />
+      </div>
+    </main>
+  )
+}
